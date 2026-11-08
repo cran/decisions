@@ -1,0 +1,49 @@
+Package: decisions
+Version: 0.1.0
+Title: Typed Decisions from Decision Models
+Description: Sends texts and images to decision models: hosted or local
+    models that return a probability for each allowed answer to a typed
+    question (true or false, a choice, or an ordered score). Supports the
+    web services of 'TypeSafe' <https://docs.typesafe.ai/introduction>,
+    'OpenAI' <https://platform.openai.com>, 'OpenRouter'
+    <https://openrouter.ai> and 'Microsoft Foundry' <https://ai.azure.com>,
+    which need an API (application programming interface) key and can
+    charge for each call, and any local or hosted server that uses the
+    'SystemOne' request format.
+    Returns one row for each input in the 'tidymodels' style, saves and
+    scores a complete decision setup, and applies a calibrator fitted with
+    'probably'. Includes injury reports
+    from the Severe Injury Reports of the U.S. Occupational Safety and Health
+    Administration <https://www.osha.gov/severe-injury-reports>, food recall
+    reports of the U.S. Food and Drug Administration
+    <https://open.fda.gov/apis/food/enforcement/>, and simulated textile
+    images made with 'spc4sts', Bui and Apley (2021)
+    <doi:10.1080/00224065.2019.1707730>.
+Authors@R: c(
+    person("Fadel M.", "Megahed", role = c("aut", "cre"), email = "fmegahed@miamioh.edu",
+           comment = c(ORCID = "0000-0003-2194-5110")),
+    person("Ying-Ju", "Chen", role = "aut", email = "ychen4@udayton.edu",
+           comment = c(ORCID = "0000-0002-6444-6859")))
+License: MIT + file LICENSE
+URL: https://github.com/fmegahed/decisions,
+        https://fmegahed.github.io/decisions/
+BugReports: https://github.com/fmegahed/decisions/issues
+Depends: R (>= 4.3.0)
+Imports: cli (>= 3.6.0), httr2 (>= 1.2.0), jsonlite (>= 1.8.5), purrr
+        (>= 1.0.0), rlang (>= 1.3.0), S7 (>= 0.2.0), stringi, tibble
+Suggests: dplyr, knitr, magick, mgcv, probably, rmarkdown, rsample,
+        testthat (>= 3.0.0), withr, yardstick
+Config/testthat/edition: 3
+Encoding: UTF-8
+Language: en-US
+VignetteBuilder: knitr, rmarkdown
+Config/roxygen2/version: 8.0.0
+LazyData: true
+NeedsCompilation: no
+Packaged: 2026-10-24 15:36:31 UTC; megahefm
+Author: Fadel M. Megahed [aut, cre] (ORCID:
+    <https://orcid.org/0000-0003-2194-5110>),
+  Ying-Ju Chen [aut] (ORCID: <https://orcid.org/0000-0002-6444-6859>)
+Maintainer: Fadel M. Megahed <fmegahed@miamioh.edu>
+Repository: CRAN
+Date/Publication: 2026-11-08 17:00:07 UTC

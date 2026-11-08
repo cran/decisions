@@ -1,0 +1,2673 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+
+
+<title>Case study: industrial image inspection</title>
+
+<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
+// be compatible with the behavior of Pandoc < 2.8).
+document.addEventListener('DOMContentLoaded', function(e) {
+  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
+  var i, h, a;
+  for (i = 0; i < hs.length; i++) {
+    h = hs[i];
+    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
+    a = h.attributes;
+    while (a.length > 0) h.removeAttribute(a[0].name);
+  }
+});
+</script>
+
+<style type="text/css">
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+</style>
+
+
+
+<style type="text/css">
+code {
+white-space: pre;
+}
+.sourceCode {
+overflow: visible;
+}
+</style>
+<style type="text/css" data-origin="pandoc">
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
+div.sourceCode
+{ }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } 
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.at { color: #7d9029; } 
+code span.bn { color: #40a070; } 
+code span.bu { color: #008000; } 
+code span.cf { color: #007020; font-weight: bold; } 
+code span.ch { color: #4070a0; } 
+code span.cn { color: #880000; } 
+code span.co { color: #60a0b0; font-style: italic; } 
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.do { color: #ba2121; font-style: italic; } 
+code span.dt { color: #902000; } 
+code span.dv { color: #40a070; } 
+code span.er { color: #ff0000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #40a070; } 
+code span.fu { color: #06287e; } 
+code span.im { color: #008000; font-weight: bold; } 
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.kw { color: #007020; font-weight: bold; } 
+code span.op { color: #666666; } 
+code span.ot { color: #007020; } 
+code span.pp { color: #bc7a00; } 
+code span.sc { color: #4070a0; } 
+code span.ss { color: #bb6688; } 
+code span.st { color: #4070a0; } 
+code span.va { color: #19177c; } 
+code span.vs { color: #4070a0; } 
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    var j = 0;
+    while (j < rules.length) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") {
+        j++;
+        continue;
+      }
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') {
+        j++;
+        continue;
+      }
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">Case study: industrial image
+inspection</h1>
+
+
+
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">library</span>(decisions)</span></code></pre></div>
+<div id="overview" class="section level2">
+<h2>Overview</h2>
+<p>Can a decision model find defects in images of manufactured parts
+when it sees only a few reference images? And are its probabilities
+calibrated, so that a probability of 0.8 means that about 8 of 10 such
+parts are defective?</p>
+<p>This vignette is a complete case study. It goes from the wording of
+the descriptions to a one-time test, on five datasets of industrial
+images. If you only want to learn the image arguments on one small
+dataset, read <code>vignette(&quot;images&quot;)</code> first.</p>
+<p>The case study repeats the steps of a study of decision models on
+these images (the original study; its record is public at <a href="https://fmegahed.github.io/decision-models-for-industrial-image-qc/" class="uri">https://fmegahed.github.io/decision-models-for-industrial-image-qc/</a>).
+It tunes the descriptions of the answers, chooses the number of
+reference images and the image size, fits a calibrator, and saves each
+setup for one final test. It uses three models:</p>
+<ul>
+<li>Jev, from TypeSafe, with <code>decider_typesafe()</code>. The
+version is pinned to <code>jev-1.14.0</code>, so a later version of Jev
+does not change the results.</li>
+<li>gpt-6-luna, on the Decisions API of OpenAI, with
+<code>decider_openai()</code>.</li>
+<li>Clef-Flash, from Cloudflare, on a local SGLang server, with
+<code>decider_systemone()</code>.</li>
+</ul>
+<p>The results below come from live calls on 2026-10-23 and 2026-10-24.
+The package saved them in <code>extdata/study_again.rds</code> of the
+installed package, so this vignette builds without a key, a network or
+the images. The script <code>study_again.R</code> in the <a href="https://github.com/fmegahed/decisions">GitHub repository</a>
+(folder <code>data-raw</code>) made them. Its code is the code of this
+vignette.</p>
+</div>
+<div id="data" class="section level2">
+<h2>Data</h2>
+<p>The five datasets come from a published study of image inspection
+with CLIP (Megahed et al., 2026). Each image is <code>nominal</code> (a
+good part) or <code>defective</code>.</p>
+<table>
+<colgroup>
+<col width="25%" />
+<col width="25%" />
+<col width="25%" />
+<col width="25%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Dataset</th>
+<th>Images</th>
+<th>Nominal</th>
+<th>Defective</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>extrusion</code></td>
+<td>Frames of the extrusion profile of a 3D printer</td>
+<td><code>normal</code></td>
+<td><code>over</code>, <code>under</code> (too much or too little
+material)</td>
+</tr>
+<tr class="even">
+<td><code>microstructure</code></td>
+<td>Simulated microstructure images (EBSD)</td>
+<td><code>Uniform</code></td>
+<td><code>Band</code>, <code>Bimodal</code>, <code>SingleCrystal</code>,
+each at a <code>low</code>, <code>medium</code> or <code>high</code>
+level</td>
+</tr>
+<tr class="odd">
+<td><code>pan_images</code></td>
+<td>Surfaces of metallic pans</td>
+<td><code>nominal</code></td>
+<td><code>defective</code></td>
+</tr>
+<tr class="even">
+<td><code>pipe_staple</code></td>
+<td>A pipe staple on a car production line</td>
+<td><code>good</code></td>
+<td><code>missing</code> (the staple is missing)</td>
+</tr>
+<tr class="odd">
+<td><code>textiles</code></td>
+<td>Simulated textured surfaces</td>
+<td><code>nominal</code></td>
+<td><code>local</code> (a small flaw), <code>global</code> (a change of
+the whole texture)</td>
+</tr>
+</tbody>
+</table>
+<p>The authors of Megahed et al. (2026) recorded the extrusion images
+and simulated the microstructure images. The pan images come from
+Megahed and Camelio (2012). The authors simulated the textile images
+with the R package spc4sts (Bui &amp; Apley, 2021). The pipe staple
+images come from the Automotive Visual Inspection Dataset (AutoVI) of
+Renault (Carvalho et al., 2024).</p>
+<div id="licenses" class="section level3">
+<h3>Licenses</h3>
+<p>The images are in the public repository <a href="https://github.com/fmegahed/qe_genai">fmegahed/qe_genai</a>,
+folder <code>data/</code>, under the MIT license. The pipe staple images
+keep the license of AutoVI, CC BY-NC-SA 4.0: give credit, use them for
+non-commercial work only, and share changed images under the same
+license. The table <code>study_sets.csv</code> of the package holds only
+the image names and the labels. The package holds no image of these
+datasets, except the 50 textile images of
+<code>vignette(&quot;images&quot;)</code>. Here they are learning or reference
+images, not test images.</p>
+</div>
+<div id="images" class="section level3">
+<h3>Images</h3>
+<p>Download the repository (about 360 MB):</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a><span class="fu">git</span> clone https://github.com/fmegahed/qe_genai.git</span></code></pre></div>
+<p>Then tell R where the images are, and where the state files, the
+setups and the test results go:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a>image_dir <span class="ot">&lt;-</span> <span class="st">&quot;qe_genai/data&quot;</span></span>
+<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a>state_dir <span class="ot">&lt;-</span> <span class="st">&quot;state&quot;</span></span>
+<span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a>setup_dir <span class="ot">&lt;-</span> <span class="st">&quot;setups&quot;</span></span>
+<span id="cb3-4"><a href="#cb3-4" tabindex="-1"></a>test_dir <span class="ot">&lt;-</span> <span class="st">&quot;test&quot;</span></span></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="fu">dir.create</span>(state_dir)</span>
+<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a><span class="fu">dir.create</span>(setup_dir)</span>
+<span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a><span class="fu">dir.create</span>(test_dir)</span></code></pre></div>
+</div>
+</div>
+<div id="rows" class="section level2">
+<h2>Rows</h2>
+<p>The table <code>study_sets.csv</code> gives each image one role. The
+image paths are relative to the folder <code>data/</code> of
+fmegahed/qe_genai.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a>sets <span class="ot">&lt;-</span> <span class="fu">system.file</span>(<span class="st">&quot;extdata&quot;</span>, <span class="st">&quot;study_sets.csv&quot;</span>, <span class="at">package =</span> <span class="st">&quot;decisions&quot;</span>) <span class="sc">|&gt;</span></span>
+<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a>  utils<span class="sc">::</span><span class="fu">read.csv</span>() <span class="sc">|&gt;</span></span>
+<span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a>  tibble<span class="sc">::</span><span class="fu">as_tibble</span>() <span class="sc">|&gt;</span></span>
+<span id="cb5-4"><a href="#cb5-4" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">mutate</span>(</span>
+<span id="cb5-5"><a href="#cb5-5" tabindex="-1"></a>    <span class="at">truth =</span> <span class="fu">factor</span>(</span>
+<span id="cb5-6"><a href="#cb5-6" tabindex="-1"></a>      dplyr<span class="sc">::</span><span class="fu">if_else</span>(class <span class="sc">==</span> <span class="st">&quot;nominal&quot;</span>, <span class="st">&quot;normal&quot;</span>, <span class="st">&quot;defective&quot;</span>),</span>
+<span id="cb5-7"><a href="#cb5-7" tabindex="-1"></a>      <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">&quot;normal&quot;</span>, <span class="st">&quot;defective&quot;</span>)</span>
+<span id="cb5-8"><a href="#cb5-8" tabindex="-1"></a>    ),</span>
+<span id="cb5-9"><a href="#cb5-9" tabindex="-1"></a>    <span class="at">path =</span> <span class="fu">file.path</span>(image_dir, image_path)</span>
+<span id="cb5-10"><a href="#cb5-10" tabindex="-1"></a>  )</span>
+<span id="cb5-11"><a href="#cb5-11" tabindex="-1"></a></span>
+<span id="cb5-12"><a href="#cb5-12" tabindex="-1"></a>by_dataset <span class="ot">&lt;-</span> <span class="fu">split</span>(sets, sets<span class="sc">$</span>dataset)</span>
+<span id="cb5-13"><a href="#cb5-13" tabindex="-1"></a></span>
+<span id="cb5-14"><a href="#cb5-14" tabindex="-1"></a><span class="fu">table</span>(sets<span class="sc">$</span>dataset, sets<span class="sc">$</span>role)</span>
+<span id="cb5-15"><a href="#cb5-15" tabindex="-1"></a><span class="co">#&gt;                 </span></span>
+<span id="cb5-16"><a href="#cb5-16" tabindex="-1"></a><span class="co">#&gt;                  calibration learning reference test</span></span>
+<span id="cb5-17"><a href="#cb5-17" tabindex="-1"></a><span class="co">#&gt;   extrusion               50       92         8  200</span></span>
+<span id="cb5-18"><a href="#cb5-18" tabindex="-1"></a><span class="co">#&gt;   microstructure          50       92         8  450</span></span>
+<span id="cb5-19"><a href="#cb5-19" tabindex="-1"></a><span class="co">#&gt;   pan_images               0       12         8   78</span></span>
+<span id="cb5-20"><a href="#cb5-20" tabindex="-1"></a><span class="co">#&gt;   pipe_staple             34       92         8  100</span></span>
+<span id="cb5-21"><a href="#cb5-21" tabindex="-1"></a><span class="co">#&gt;   textiles                50       92         8  200</span></span></code></pre></div>
+<p>The roles:</p>
+<ul>
+<li><code>learning</code>: labeled images to tune on. The tuning steps
+choose the descriptions and the image settings on these images.</li>
+<li><code>reference</code>: four images per class, with a
+<code>rank</code> from 1 to 4. A setup with <code>k</code> references
+per class uses the ranks 1 to <code>k</code>. The references come from
+the learning images. No step scores the references that its setup
+uses.</li>
+<li><code>calibration</code>: labeled images to fit the calibrator on.
+The pans have too few images for this role. For the pans, the calibrator
+uses the learning images and the references that the chosen setup does
+not use.</li>
+<li><code>test</code>: the images for the final estimate. They are
+scored one time only.</li>
+</ul>
+<p>Each step of the tuning looks at the scores and keeps the better
+choice. A choice that looks better on the images that it was chosen on
+is, on average, less good on new images. So the estimate of a tuned
+setup on its own learning images is too high. The test images give an
+honest estimate only if no choice used them. So the test images are
+scored one time, at the end, after all choices are fixed.
+<code>score_setup()</code> refuses rows with the role <code>test</code>,
+and <code>evaluate_once()</code> scores them one time (see “Test”).</p>
+<p>The original study drew the rows once, with fixed seeds.</p>
+</div>
+<div id="question" class="section level2">
+<h2>Question</h2>
+<p>Each dataset gets the same choice question, with two answers. The
+instructions name <code>inspection_image</code>: that is the name of the
+input image in each request. The descriptions of the answers change
+during the tuning. The first candidate of each dataset is a generic
+description.</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a>quality_question <span class="ot">&lt;-</span> <span class="cf">function</span>(descriptions) {</span>
+<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a>  <span class="fu">list</span>(<span class="at">quality =</span> <span class="fu">question_choice</span>(</span>
+<span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a>    <span class="st">&quot;Inspect `inspection_image` for manufacturing defects. Select exactly one category.&quot;</span>,</span>
+<span id="cb6-4"><a href="#cb6-4" tabindex="-1"></a>    descriptions</span>
+<span id="cb6-5"><a href="#cb6-5" tabindex="-1"></a>  ))</span>
+<span id="cb6-6"><a href="#cb6-6" tabindex="-1"></a>}</span>
+<span id="cb6-7"><a href="#cb6-7" tabindex="-1"></a></span>
+<span id="cb6-8"><a href="#cb6-8" tabindex="-1"></a>generic <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
+<span id="cb6-9"><a href="#cb6-9" tabindex="-1"></a>  <span class="at">normal =</span> <span class="st">&quot;No visible manufacturing defects; the part appears conforming.&quot;</span>,</span>
+<span id="cb6-10"><a href="#cb6-10" tabindex="-1"></a>  <span class="at">defective =</span> <span class="st">&quot;At least one visible manufacturing defect or anomaly.&quot;</span></span>
+<span id="cb6-11"><a href="#cb6-11" tabindex="-1"></a>)</span></code></pre></div>
+</div>
+<div id="models" class="section level2">
+<h2>Models</h2>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a>deciders <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
+<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a>  <span class="at">jev =</span> <span class="fu">decider_typesafe</span>(<span class="st">&quot;jev-1.14.0&quot;</span>),</span>
+<span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a>  <span class="at">openai =</span> <span class="fu">decider_openai</span>(<span class="st">&quot;gpt-6-luna&quot;</span>),</span>
+<span id="cb7-4"><a href="#cb7-4" tabindex="-1"></a>  <span class="at">clef =</span> <span class="fu">decider_systemone</span>(</span>
+<span id="cb7-5"><a href="#cb7-5" tabindex="-1"></a>    <span class="st">&quot;http://localhost:30000&quot;</span>, <span class="st">&quot;Cloudflare/clef-flash&quot;</span>, <span class="at">image_format =</span> <span class="st">&quot;images&quot;</span></span>
+<span id="cb7-6"><a href="#cb7-6" tabindex="-1"></a>  )</span>
+<span id="cb7-7"><a href="#cb7-7" tabindex="-1"></a>)</span></code></pre></div>
+<p><code>decider_typesafe()</code> reads the key from the environment
+variable <code>TYPESAFE_API_KEY</code>, and
+<code>decider_openai()</code> from <code>OPENAI_API_KEY</code> (for
+example, in <code>~/.Renviron</code>). Clef-Flash runs on your computer,
+on a GPU, and needs no key. The shell command below starts its server
+with Docker (<code>vignette(&quot;images&quot;)</code> has the details). It is not
+run here.</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a><span class="ex">docker</span> run <span class="at">--gpus</span> all <span class="at">--shm-size</span> 8g <span class="at">--ipc</span><span class="op">=</span>host <span class="at">-p</span> 30000:30000 <span class="dt">\</span></span>
+<span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a>  lmsysorg/sglang:dev-clef <span class="dt">\</span></span>
+<span id="cb8-3"><a href="#cb8-3" tabindex="-1"></a>  sglang serve <span class="at">--model-path</span> Cloudflare/clef-flash <span class="at">--host</span> 0.0.0.0 <span class="at">--port</span> 30000</span></code></pre></div>
+<p>The code below runs one model at a time. <code>model_name</code> is
+<code>&quot;jev&quot;</code>, <code>&quot;openai&quot;</code> or <code>&quot;clef&quot;</code>.</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a>model_name <span class="ot">&lt;-</span> <span class="st">&quot;jev&quot;</span></span></code></pre></div>
+</div>
+<div id="setups" class="section level2">
+<h2>Setups</h2>
+<p>A setup holds one complete decision: the decider, the question with
+its descriptions, the reference images and the image settings.
+<code>make_setup()</code> makes the setup of one model and dataset with
+<code>k</code> references per class. <code>upscale = TRUE</code>
+enlarges each image to <code>max_size</code> pixels on its longest side:
+TypeSafe refuses images under 280 pixels, and some images of these
+datasets are smaller.</p>
+<p><code>score_rows()</code> scores a setup on labeled rows with
+<code>score_setup()</code>. It gives <code>score_setup()</code> the role
+of each row, so a test row stops the call before any request. A
+reference row counts as a learning row. Each run keeps its answers in a
+state file (<code>path</code>): a run that stops continues and does not
+pay twice. <code>score_rows()</code> also keeps the image paths with the
+result, so a later step can check that its rows are in the same order as
+the saved answers.</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a>make_setup <span class="ot">&lt;-</span> <span class="cf">function</span>(model, dataset, descriptions, k, max_size) {</span>
+<span id="cb10-2"><a href="#cb10-2" tabindex="-1"></a>  references <span class="ot">&lt;-</span> by_dataset[[dataset]] <span class="sc">|&gt;</span></span>
+<span id="cb10-3"><a href="#cb10-3" tabindex="-1"></a>    dplyr<span class="sc">::</span><span class="fu">filter</span>(role <span class="sc">==</span> <span class="st">&quot;reference&quot;</span>, rank <span class="sc">&lt;=</span> k) <span class="sc">|&gt;</span></span>
+<span id="cb10-4"><a href="#cb10-4" tabindex="-1"></a>    dplyr<span class="sc">::</span><span class="fu">arrange</span>(rank)</span>
+<span id="cb10-5"><a href="#cb10-5" tabindex="-1"></a>  <span class="fu">decision_setup</span>(</span>
+<span id="cb10-6"><a href="#cb10-6" tabindex="-1"></a>    deciders[[model]], <span class="fu">quality_question</span>(descriptions),</span>
+<span id="cb10-7"><a href="#cb10-7" tabindex="-1"></a>    <span class="at">references =</span> <span class="fu">list</span>(</span>
+<span id="cb10-8"><a href="#cb10-8" tabindex="-1"></a>      <span class="at">normal =</span> references<span class="sc">$</span>path[references<span class="sc">$</span>truth <span class="sc">==</span> <span class="st">&quot;normal&quot;</span>],</span>
+<span id="cb10-9"><a href="#cb10-9" tabindex="-1"></a>      <span class="at">defective =</span> references<span class="sc">$</span>path[references<span class="sc">$</span>truth <span class="sc">==</span> <span class="st">&quot;defective&quot;</span>]</span>
+<span id="cb10-10"><a href="#cb10-10" tabindex="-1"></a>    ),</span>
+<span id="cb10-11"><a href="#cb10-11" tabindex="-1"></a>    <span class="at">max_size =</span> max_size, <span class="at">upscale =</span> <span class="cn">TRUE</span></span>
+<span id="cb10-12"><a href="#cb10-12" tabindex="-1"></a>  )</span>
+<span id="cb10-13"><a href="#cb10-13" tabindex="-1"></a>}</span>
+<span id="cb10-14"><a href="#cb10-14" tabindex="-1"></a></span>
+<span id="cb10-15"><a href="#cb10-15" tabindex="-1"></a>score_rows <span class="ot">&lt;-</span> <span class="cf">function</span>(setup, rows, path) {</span>
+<span id="cb10-16"><a href="#cb10-16" tabindex="-1"></a>  <span class="fu">score_setup</span>(</span>
+<span id="cb10-17"><a href="#cb10-17" tabindex="-1"></a>    setup, <span class="at">image =</span> rows<span class="sc">$</span>path, <span class="at">truth =</span> rows<span class="sc">$</span>truth,</span>
+<span id="cb10-18"><a href="#cb10-18" tabindex="-1"></a>    <span class="at">role =</span> dplyr<span class="sc">::</span><span class="fu">if_else</span>(rows<span class="sc">$</span>role <span class="sc">==</span> <span class="st">&quot;reference&quot;</span>, <span class="st">&quot;learning&quot;</span>, rows<span class="sc">$</span>role),</span>
+<span id="cb10-19"><a href="#cb10-19" tabindex="-1"></a>    <span class="at">path =</span> path</span>
+<span id="cb10-20"><a href="#cb10-20" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb10-21"><a href="#cb10-21" tabindex="-1"></a>    dplyr<span class="sc">::</span><span class="fu">mutate</span>(<span class="at">image_path =</span> <span class="fu">list</span>(rows<span class="sc">$</span>image_path))</span>
+<span id="cb10-22"><a href="#cb10-22" tabindex="-1"></a>}</span>
+<span id="cb10-23"><a href="#cb10-23" tabindex="-1"></a></span>
+<span id="cb10-24"><a href="#cb10-24" tabindex="-1"></a>state_file <span class="ot">&lt;-</span> <span class="cf">function</span>(...) {</span>
+<span id="cb10-25"><a href="#cb10-25" tabindex="-1"></a>  <span class="fu">file.path</span>(state_dir, <span class="fu">paste0</span>(<span class="fu">paste</span>(..., <span class="at">sep =</span> <span class="st">&quot;_&quot;</span>), <span class="st">&quot;.json&quot;</span>))</span>
+<span id="cb10-26"><a href="#cb10-26" tabindex="-1"></a>}</span></code></pre></div>
+</div>
+<div id="wording" class="section level2">
+<h2>Wording</h2>
+<div id="candidates" class="section level3">
+<h3>Candidates</h3>
+<p>The candidate descriptions come from description loops. In each loop,
+an agent (Claude Code) looked at 96 labeled images of one dataset (the
+learning images and the references of rank 3 and 4), in a sandbox folder
+that it could not leave. The image names gave no label. It wrote one
+candidate at a time: a new text for <code>normal</code> and for
+<code>defective</code>, from the images that the best candidate so far
+scored badly. A script scored each candidate, with two references per
+class, and gave the agent the ROC AUC. A loop had at most 6 candidates,
+and candidate 1 was the generic description.</p>
+<p>The loops for Jev and Clef-Flash ran in the original study.
+gpt-6-luna got its own loops, with the same rules, scored with
+<code>score_setup()</code> of this package. The pans have no loop: they
+keep the generic description. The page <a href="https://fmegahed.github.io/decision-models-for-industrial-image-qc/pages/description_loops.html">description
+loops</a> of the study record shows each candidate of the study loops
+with the reason for the change.</p>
+<p>The saved results hold the candidates of all loops:</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" tabindex="-1"></a>saved <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="fu">system.file</span>(<span class="st">&quot;extdata&quot;</span>, <span class="st">&quot;study_again.rds&quot;</span>, <span class="at">package =</span> <span class="st">&quot;decisions&quot;</span>))</span>
+<span id="cb11-2"><a href="#cb11-2" tabindex="-1"></a>candidates <span class="ot">&lt;-</span> dplyr<span class="sc">::</span><span class="fu">select</span>(</span>
+<span id="cb11-3"><a href="#cb11-3" tabindex="-1"></a>  saved<span class="sc">$</span>wording, model, dataset, candidate, normal, defective, reason</span>
+<span id="cb11-4"><a href="#cb11-4" tabindex="-1"></a>)</span></code></pre></div>
+</div>
+<div id="keep-rule" class="section level3">
+<h3>Keep rule</h3>
+<p>Two wordings can get a different AUC by chance alone: 96 images give
+a rough AUC. If each higher AUC replaced the best wording, the loop
+would follow this noise, and it would keep the wording that fits these
+96 images by luck. The keep rule protects against this. A candidate
+replaces the current best only if its AUC is at least 0.02 higher.
+Candidate 1 is the first best.</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" tabindex="-1"></a>keep_rule <span class="ot">&lt;-</span> <span class="cf">function</span>(auc, <span class="at">gain =</span> <span class="fl">0.02</span>) {</span>
+<span id="cb12-2"><a href="#cb12-2" tabindex="-1"></a>  best <span class="ot">&lt;-</span> purrr<span class="sc">::</span><span class="fu">accumulate</span>(auc, \(best, x) {</span>
+<span id="cb12-3"><a href="#cb12-3" tabindex="-1"></a>    <span class="cf">if</span> (<span class="fu">round</span>(x <span class="sc">-</span> best, <span class="dv">10</span>) <span class="sc">&gt;=</span> gain) x <span class="cf">else</span> best</span>
+<span id="cb12-4"><a href="#cb12-4" tabindex="-1"></a>  })</span>
+<span id="cb12-5"><a href="#cb12-5" tabindex="-1"></a>  <span class="fu">c</span>(<span class="cn">TRUE</span>, <span class="fu">diff</span>(best) <span class="sc">&gt;</span> <span class="dv">0</span>)</span>
+<span id="cb12-6"><a href="#cb12-6" tabindex="-1"></a>}</span></code></pre></div>
+<p><code>round()</code> removes the small errors of floating-point
+numbers, so a gain of exactly 0.02 counts.</p>
+</div>
+<div id="scores" class="section level3">
+<h3>Scores</h3>
+<p>The wording step scores the candidates of each loop in their order,
+on the same 96 images, with two references per class and
+<code>max_size = 768</code>. For Jev and Clef-Flash, these are new calls
+with the package. For gpt-6-luna, its loop already scored its candidates
+in this way, so its AUCs come from its loop logs, with no new call.</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" tabindex="-1"></a>score_candidate <span class="ot">&lt;-</span> <span class="cf">function</span>(model, dataset, candidate, normal, defective) {</span>
+<span id="cb13-2"><a href="#cb13-2" tabindex="-1"></a>  setup <span class="ot">&lt;-</span> <span class="fu">make_setup</span>(</span>
+<span id="cb13-3"><a href="#cb13-3" tabindex="-1"></a>    model, dataset, <span class="fu">c</span>(<span class="at">normal =</span> normal, <span class="at">defective =</span> defective),</span>
+<span id="cb13-4"><a href="#cb13-4" tabindex="-1"></a>    <span class="at">k =</span> <span class="dv">2</span>, <span class="at">max_size =</span> <span class="dv">768</span></span>
+<span id="cb13-5"><a href="#cb13-5" tabindex="-1"></a>  )</span>
+<span id="cb13-6"><a href="#cb13-6" tabindex="-1"></a>  design <span class="ot">&lt;-</span> dplyr<span class="sc">::</span><span class="fu">filter</span>(</span>
+<span id="cb13-7"><a href="#cb13-7" tabindex="-1"></a>    by_dataset[[dataset]],</span>
+<span id="cb13-8"><a href="#cb13-8" tabindex="-1"></a>    role <span class="sc">==</span> <span class="st">&quot;learning&quot;</span> <span class="sc">|</span> (role <span class="sc">==</span> <span class="st">&quot;reference&quot;</span> <span class="sc">&amp;</span> rank <span class="sc">&gt;</span> <span class="dv">2</span>)</span>
+<span id="cb13-9"><a href="#cb13-9" tabindex="-1"></a>  )</span>
+<span id="cb13-10"><a href="#cb13-10" tabindex="-1"></a>  <span class="fu">score_rows</span>(setup, design, <span class="fu">state_file</span>(<span class="st">&quot;wording&quot;</span>, model, dataset, candidate))</span>
+<span id="cb13-11"><a href="#cb13-11" tabindex="-1"></a>}</span>
+<span id="cb13-12"><a href="#cb13-12" tabindex="-1"></a></span>
+<span id="cb13-13"><a href="#cb13-13" tabindex="-1"></a>wording <span class="ot">&lt;-</span> dplyr<span class="sc">::</span><span class="fu">filter</span>(candidates, model <span class="sc">==</span> model_name)</span></code></pre></div>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" tabindex="-1"></a>wording <span class="ot">&lt;-</span> wording <span class="sc">|&gt;</span></span>
+<span id="cb14-2"><a href="#cb14-2" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">mutate</span>(</span>
+<span id="cb14-3"><a href="#cb14-3" tabindex="-1"></a>    <span class="at">result =</span> purrr<span class="sc">::</span><span class="fu">pmap</span>(</span>
+<span id="cb14-4"><a href="#cb14-4" tabindex="-1"></a>      <span class="fu">list</span>(model, dataset, candidate, normal, defective), score_candidate</span>
+<span id="cb14-5"><a href="#cb14-5" tabindex="-1"></a>    ),</span>
+<span id="cb14-6"><a href="#cb14-6" tabindex="-1"></a>    <span class="at">auc =</span> purrr<span class="sc">::</span><span class="fu">map_dbl</span>(result, <span class="st">&quot;estimate&quot;</span>)</span>
+<span id="cb14-7"><a href="#cb14-7" tabindex="-1"></a>  )</span></code></pre></div>
+<p>The keep rule then gives the final wording of each dataset. The pans
+get the generic description.</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" tabindex="-1"></a>wording <span class="ot">&lt;-</span> dplyr<span class="sc">::</span><span class="fu">mutate</span>(wording, <span class="at">kept =</span> <span class="fu">keep_rule</span>(auc), <span class="at">.by =</span> dataset)</span>
+<span id="cb15-2"><a href="#cb15-2" tabindex="-1"></a></span>
+<span id="cb15-3"><a href="#cb15-3" tabindex="-1"></a>final_wording <span class="ot">&lt;-</span> wording <span class="sc">|&gt;</span></span>
+<span id="cb15-4"><a href="#cb15-4" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">filter</span>(kept) <span class="sc">|&gt;</span></span>
+<span id="cb15-5"><a href="#cb15-5" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">slice_tail</span>(<span class="at">n =</span> <span class="dv">1</span>, <span class="at">by =</span> dataset) <span class="sc">|&gt;</span></span>
+<span id="cb15-6"><a href="#cb15-6" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(model, dataset, normal, defective) <span class="sc">|&gt;</span></span>
+<span id="cb15-7"><a href="#cb15-7" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">bind_rows</span>(tibble<span class="sc">::</span><span class="fu">tibble</span>(</span>
+<span id="cb15-8"><a href="#cb15-8" tabindex="-1"></a>    <span class="at">model =</span> model_name, <span class="at">dataset =</span> <span class="st">&quot;pan_images&quot;</span>,</span>
+<span id="cb15-9"><a href="#cb15-9" tabindex="-1"></a>    <span class="at">normal =</span> generic[[<span class="st">&quot;normal&quot;</span>]], <span class="at">defective =</span> generic[[<span class="st">&quot;defective&quot;</span>]]</span>
+<span id="cb15-10"><a href="#cb15-10" tabindex="-1"></a>  ))</span></code></pre></div>
+<p>The table gives, for each model and dataset, the number of
+candidates, the AUC of the generic description (candidate 1), the final
+candidate and its AUC.</p>
+<table>
+<thead>
+<tr class="header">
+<th align="left">model</th>
+<th align="left">dataset</th>
+<th align="right">candidates</th>
+<th align="right">generic_auc</th>
+<th align="right">final</th>
+<th align="right">final_auc</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">jev</td>
+<td align="left">extrusion</td>
+<td align="right">6</td>
+<td align="right">0.666</td>
+<td align="right">2</td>
+<td align="right">0.695</td>
+</tr>
+<tr class="even">
+<td align="left">jev</td>
+<td align="left">microstructure</td>
+<td align="right">4</td>
+<td align="right">0.804</td>
+<td align="right">2</td>
+<td align="right">0.918</td>
+</tr>
+<tr class="odd">
+<td align="left">jev</td>
+<td align="left">pipe_staple</td>
+<td align="right">1</td>
+<td align="right">0.934</td>
+<td align="right">1</td>
+<td align="right">0.934</td>
+</tr>
+<tr class="even">
+<td align="left">jev</td>
+<td align="left">textiles</td>
+<td align="right">2</td>
+<td align="right">0.674</td>
+<td align="right">2</td>
+<td align="right">0.996</td>
+</tr>
+<tr class="odd">
+<td align="left">openai</td>
+<td align="left">extrusion</td>
+<td align="right">6</td>
+<td align="right">0.613</td>
+<td align="right">5</td>
+<td align="right">0.770</td>
+</tr>
+<tr class="even">
+<td align="left">openai</td>
+<td align="left">microstructure</td>
+<td align="right">5</td>
+<td align="right">0.931</td>
+<td align="right">1</td>
+<td align="right">0.931</td>
+</tr>
+<tr class="odd">
+<td align="left">openai</td>
+<td align="left">pipe_staple</td>
+<td align="right">2</td>
+<td align="right">0.828</td>
+<td align="right">2</td>
+<td align="right">0.999</td>
+</tr>
+<tr class="even">
+<td align="left">openai</td>
+<td align="left">textiles</td>
+<td align="right">6</td>
+<td align="right">0.743</td>
+<td align="right">5</td>
+<td align="right">0.966</td>
+</tr>
+<tr class="odd">
+<td align="left">clef</td>
+<td align="left">extrusion</td>
+<td align="right">6</td>
+<td align="right">0.797</td>
+<td align="right">2</td>
+<td align="right">0.820</td>
+</tr>
+<tr class="even">
+<td align="left">clef</td>
+<td align="left">microstructure</td>
+<td align="right">5</td>
+<td align="right">0.901</td>
+<td align="right">4</td>
+<td align="right">0.953</td>
+</tr>
+<tr class="odd">
+<td align="left">clef</td>
+<td align="left">pipe_staple</td>
+<td align="right">2</td>
+<td align="right">0.661</td>
+<td align="right">2</td>
+<td align="right">1.000</td>
+</tr>
+<tr class="even">
+<td align="left">clef</td>
+<td align="left">textiles</td>
+<td align="right">5</td>
+<td align="right">0.780</td>
+<td align="right">2</td>
+<td align="right">0.959</td>
+</tr>
+</tbody>
+</table>
+<p>The loops raised the AUC of the generic description on most datasets.
+The largest gains: Clef-Flash on the pipe staples (0.66 to 1.00), Jev on
+the textiles (0.67 to 1.00), and gpt-6-luna on the textiles (0.74 to
+0.97). For Jev on the pipe staples, the study loop stopped after the
+generic description. For gpt-6-luna on the microstructures, no candidate
+beat the generic description (0.93).</p>
+<p>The keep rule worked as intended. For Clef-Flash on the textiles,
+candidate 2 scored 0.959 and candidate 4 scored 0.977. The gain of 0.018
+is less than 0.02, so candidate 2 stayed the final wording.</p>
+<p>These AUCs are on the images that the loops chose on, so they are too
+high (see “Rows”). The calibration and test images give fresher
+estimates.</p>
+<p>The final descriptions of the textiles. Each model has its own loop,
+so each model has its own wording:</p>
+<table>
+<colgroup>
+<col width="1%" />
+<col width="40%" />
+<col width="58%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">model</th>
+<th align="left">normal</th>
+<th align="left">defective</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">jev</td>
+<td align="left">Grey fabric with a soft, smooth texture of long
+diagonal streaks that blend gently into each other; no spots, marks or
+areas that differ from the rest.</td>
+<td align="left">Grey fabric with a visible anomaly: either a small
+local spot or mark, or a texture that is grainier, more speckled and
+noisier across the whole image, with short choppy strokes instead of
+long smooth diagonal streaks.</td>
+</tr>
+<tr class="even">
+<td align="left">openai</td>
+<td align="left">Gray fabric with a smooth, soft texture of long
+diagonal streaks running from lower left to upper right; clear darker
+and lighter bands and patches stand out, and the pattern looks the same
+across the whole image.</td>
+<td align="left">Gray fabric where the texture is changed: either the
+whole image is covered by a fine, even, static-like grain with weak
+contrast, so the long diagonal streaks and dark bands are faint or
+washed out, or a tiny, sharp cluster of black and white pixels (often
+near an edge or corner) breaks the soft streak pattern.</td>
+</tr>
+<tr class="odd">
+<td align="left">clef</td>
+<td align="left">Gray fabric with a uniform texture of smooth, soft
+diagonal streaks running evenly across the whole image; no spots or
+marks.</td>
+<td align="left">Gray fabric where the texture differs from smooth even
+diagonal streaks: the whole surface looks rougher, coarser, mottled or
+clumpy, or there is a small spot, speck or foreign mark.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div id="grid" class="section level2">
+<h2>Grid</h2>
+<p>The grid tries 6 setups for each model and dataset: <code>k</code> =
+1, 2 or 4 references per class, and <code>max_size</code> = 512 or 768
+pixels. Each setup uses the final wording. It scores the learning images
+that are not references: 92 per dataset, and 12 for the pans. The setup
+with the highest AUC is the chosen setup. A tie goes to the smaller
+<code>k</code>, then to the smaller size.</p>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" tabindex="-1"></a>score_grid <span class="ot">&lt;-</span> <span class="cf">function</span>(model, dataset, normal, defective, k, max_size) {</span>
+<span id="cb16-2"><a href="#cb16-2" tabindex="-1"></a>  setup <span class="ot">&lt;-</span> <span class="fu">make_setup</span>(</span>
+<span id="cb16-3"><a href="#cb16-3" tabindex="-1"></a>    model, dataset, <span class="fu">c</span>(<span class="at">normal =</span> normal, <span class="at">defective =</span> defective), k, max_size</span>
+<span id="cb16-4"><a href="#cb16-4" tabindex="-1"></a>  )</span>
+<span id="cb16-5"><a href="#cb16-5" tabindex="-1"></a>  learning <span class="ot">&lt;-</span> dplyr<span class="sc">::</span><span class="fu">filter</span>(by_dataset[[dataset]], role <span class="sc">==</span> <span class="st">&quot;learning&quot;</span>)</span>
+<span id="cb16-6"><a href="#cb16-6" tabindex="-1"></a>  <span class="fu">score_rows</span>(setup, learning, <span class="fu">state_file</span>(<span class="st">&quot;grid&quot;</span>, model, dataset, k, max_size))</span>
+<span id="cb16-7"><a href="#cb16-7" tabindex="-1"></a>}</span>
+<span id="cb16-8"><a href="#cb16-8" tabindex="-1"></a></span>
+<span id="cb16-9"><a href="#cb16-9" tabindex="-1"></a>grid <span class="ot">&lt;-</span> final_wording <span class="sc">|&gt;</span></span>
+<span id="cb16-10"><a href="#cb16-10" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">cross_join</span>(tibble<span class="sc">::</span><span class="fu">tibble</span>(</span>
+<span id="cb16-11"><a href="#cb16-11" tabindex="-1"></a>    <span class="at">k =</span> <span class="fu">rep</span>(<span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">4</span>), <span class="at">each =</span> <span class="dv">2</span>), <span class="at">max_size =</span> <span class="fu">rep</span>(<span class="fu">c</span>(<span class="dv">512</span>, <span class="dv">768</span>), <span class="at">times =</span> <span class="dv">3</span>)</span>
+<span id="cb16-12"><a href="#cb16-12" tabindex="-1"></a>  ))</span></code></pre></div>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" tabindex="-1"></a>grid <span class="ot">&lt;-</span> grid <span class="sc">|&gt;</span></span>
+<span id="cb17-2"><a href="#cb17-2" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">mutate</span>(<span class="at">result =</span> purrr<span class="sc">::</span><span class="fu">pmap</span>(</span>
+<span id="cb17-3"><a href="#cb17-3" tabindex="-1"></a>    <span class="fu">list</span>(model, dataset, normal, defective, k, max_size), score_grid</span>
+<span id="cb17-4"><a href="#cb17-4" tabindex="-1"></a>  ))</span></code></pre></div>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" tabindex="-1"></a>grid <span class="ot">&lt;-</span> dplyr<span class="sc">::</span><span class="fu">bind_cols</span>(</span>
+<span id="cb18-2"><a href="#cb18-2" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(grid, <span class="sc">-</span>result),</span>
+<span id="cb18-3"><a href="#cb18-3" tabindex="-1"></a>  purrr<span class="sc">::</span><span class="fu">list_rbind</span>(grid<span class="sc">$</span>result) <span class="sc">|&gt;</span></span>
+<span id="cb18-4"><a href="#cb18-4" tabindex="-1"></a>    dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="sc">-</span>metric) <span class="sc">|&gt;</span></span>
+<span id="cb18-5"><a href="#cb18-5" tabindex="-1"></a>    dplyr<span class="sc">::</span><span class="fu">rename</span>(<span class="at">auc =</span> estimate)</span>
+<span id="cb18-6"><a href="#cb18-6" tabindex="-1"></a>)</span>
+<span id="cb18-7"><a href="#cb18-7" tabindex="-1"></a></span>
+<span id="cb18-8"><a href="#cb18-8" tabindex="-1"></a>chosen <span class="ot">&lt;-</span> grid <span class="sc">|&gt;</span></span>
+<span id="cb18-9"><a href="#cb18-9" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">arrange</span>(dataset, dplyr<span class="sc">::</span><span class="fu">desc</span>(<span class="fu">round</span>(auc, <span class="dv">10</span>)), k, max_size) <span class="sc">|&gt;</span></span>
+<span id="cb18-10"><a href="#cb18-10" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">slice_head</span>(<span class="at">n =</span> <span class="dv">1</span>, <span class="at">by =</span> dataset)</span></code></pre></div>
+<p>The AUC of each setup:</p>
+<table>
+<colgroup>
+<col width="9%" />
+<col width="19%" />
+<col width="11%" />
+<col width="11%" />
+<col width="11%" />
+<col width="11%" />
+<col width="11%" />
+<col width="11%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">model</th>
+<th align="left">dataset</th>
+<th align="right">k 1, 512</th>
+<th align="right">k 1, 768</th>
+<th align="right">k 2, 512</th>
+<th align="right">k 2, 768</th>
+<th align="right">k 4, 512</th>
+<th align="right">k 4, 768</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">jev</td>
+<td align="left">extrusion</td>
+<td align="right">0.771</td>
+<td align="right">0.689</td>
+<td align="right">0.750</td>
+<td align="right">0.682</td>
+<td align="right">0.764</td>
+<td align="right">0.729</td>
+</tr>
+<tr class="even">
+<td align="left">jev</td>
+<td align="left">microstructure</td>
+<td align="right">0.927</td>
+<td align="right">0.912</td>
+<td align="right">0.934</td>
+<td align="right">0.902</td>
+<td align="right">0.937</td>
+<td align="right">0.894</td>
+</tr>
+<tr class="odd">
+<td align="left">jev</td>
+<td align="left">pipe_staple</td>
+<td align="right">0.936</td>
+<td align="right">0.923</td>
+<td align="right">0.981</td>
+<td align="right">0.931</td>
+<td align="right">1.000</td>
+<td align="right">0.998</td>
+</tr>
+<tr class="even">
+<td align="left">jev</td>
+<td align="left">textiles</td>
+<td align="right">0.985</td>
+<td align="right">0.981</td>
+<td align="right">0.996</td>
+<td align="right">0.992</td>
+<td align="right">0.992</td>
+<td align="right">0.999</td>
+</tr>
+<tr class="odd">
+<td align="left">jev</td>
+<td align="left">pan_images</td>
+<td align="right">1.000</td>
+<td align="right">1.000</td>
+<td align="right">1.000</td>
+<td align="right">1.000</td>
+<td align="right">1.000</td>
+<td align="right">1.000</td>
+</tr>
+<tr class="even">
+<td align="left">openai</td>
+<td align="left">extrusion</td>
+<td align="right">0.744</td>
+<td align="right">0.747</td>
+<td align="right">0.795</td>
+<td align="right">0.763</td>
+<td align="right">0.812</td>
+<td align="right">0.760</td>
+</tr>
+<tr class="odd">
+<td align="left">openai</td>
+<td align="left">microstructure</td>
+<td align="right">0.831</td>
+<td align="right">0.960</td>
+<td align="right">0.951</td>
+<td align="right">0.927</td>
+<td align="right">0.954</td>
+<td align="right">0.943</td>
+</tr>
+<tr class="even">
+<td align="left">openai</td>
+<td align="left">pipe_staple</td>
+<td align="right">1.000</td>
+<td align="right">1.000</td>
+<td align="right">0.997</td>
+<td align="right">0.999</td>
+<td align="right">1.000</td>
+<td align="right">1.000</td>
+</tr>
+<tr class="odd">
+<td align="left">openai</td>
+<td align="left">textiles</td>
+<td align="right">0.940</td>
+<td align="right">0.942</td>
+<td align="right">0.934</td>
+<td align="right">0.963</td>
+<td align="right">0.931</td>
+<td align="right">0.977</td>
+</tr>
+<tr class="even">
+<td align="left">openai</td>
+<td align="left">pan_images</td>
+<td align="right">1.000</td>
+<td align="right">1.000</td>
+<td align="right">1.000</td>
+<td align="right">1.000</td>
+<td align="right">1.000</td>
+<td align="right">1.000</td>
+</tr>
+<tr class="odd">
+<td align="left">clef</td>
+<td align="left">extrusion</td>
+<td align="right">0.779</td>
+<td align="right">0.774</td>
+<td align="right">0.815</td>
+<td align="right">0.811</td>
+<td align="right">0.829</td>
+<td align="right">0.824</td>
+</tr>
+<tr class="even">
+<td align="left">clef</td>
+<td align="left">microstructure</td>
+<td align="right">0.964</td>
+<td align="right">0.960</td>
+<td align="right">0.942</td>
+<td align="right">0.950</td>
+<td align="right">0.963</td>
+<td align="right">0.956</td>
+</tr>
+<tr class="odd">
+<td align="left">clef</td>
+<td align="left">pipe_staple</td>
+<td align="right">0.977</td>
+<td align="right">1.000</td>
+<td align="right">0.941</td>
+<td align="right">1.000</td>
+<td align="right">0.908</td>
+<td align="right">0.964</td>
+</tr>
+<tr class="even">
+<td align="left">clef</td>
+<td align="left">textiles</td>
+<td align="right">0.919</td>
+<td align="right">0.968</td>
+<td align="right">0.948</td>
+<td align="right">0.958</td>
+<td align="right">0.882</td>
+<td align="right">0.927</td>
+</tr>
+<tr class="odd">
+<td align="left">clef</td>
+<td align="left">pan_images</td>
+<td align="right">0.944</td>
+<td align="right">1.000</td>
+<td align="right">0.861</td>
+<td align="right">1.000</td>
+<td align="right">1.000</td>
+<td align="right">1.000</td>
+</tr>
+</tbody>
+</table>
+<p>The chosen setups:</p>
+<table>
+<thead>
+<tr class="header">
+<th align="left">model</th>
+<th align="left">dataset</th>
+<th align="right">k</th>
+<th align="right">max_size</th>
+<th align="right">auc</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">jev</td>
+<td align="left">extrusion</td>
+<td align="right">1</td>
+<td align="right">512</td>
+<td align="right">0.771</td>
+</tr>
+<tr class="even">
+<td align="left">jev</td>
+<td align="left">microstructure</td>
+<td align="right">4</td>
+<td align="right">512</td>
+<td align="right">0.937</td>
+</tr>
+<tr class="odd">
+<td align="left">jev</td>
+<td align="left">pan_images</td>
+<td align="right">1</td>
+<td align="right">512</td>
+<td align="right">1.000</td>
+</tr>
+<tr class="even">
+<td align="left">jev</td>
+<td align="left">pipe_staple</td>
+<td align="right">4</td>
+<td align="right">512</td>
+<td align="right">1.000</td>
+</tr>
+<tr class="odd">
+<td align="left">jev</td>
+<td align="left">textiles</td>
+<td align="right">4</td>
+<td align="right">768</td>
+<td align="right">0.999</td>
+</tr>
+<tr class="even">
+<td align="left">openai</td>
+<td align="left">extrusion</td>
+<td align="right">4</td>
+<td align="right">512</td>
+<td align="right">0.812</td>
+</tr>
+<tr class="odd">
+<td align="left">openai</td>
+<td align="left">microstructure</td>
+<td align="right">1</td>
+<td align="right">768</td>
+<td align="right">0.960</td>
+</tr>
+<tr class="even">
+<td align="left">openai</td>
+<td align="left">pan_images</td>
+<td align="right">1</td>
+<td align="right">512</td>
+<td align="right">1.000</td>
+</tr>
+<tr class="odd">
+<td align="left">openai</td>
+<td align="left">pipe_staple</td>
+<td align="right">1</td>
+<td align="right">512</td>
+<td align="right">1.000</td>
+</tr>
+<tr class="even">
+<td align="left">openai</td>
+<td align="left">textiles</td>
+<td align="right">4</td>
+<td align="right">768</td>
+<td align="right">0.977</td>
+</tr>
+<tr class="odd">
+<td align="left">clef</td>
+<td align="left">extrusion</td>
+<td align="right">4</td>
+<td align="right">512</td>
+<td align="right">0.829</td>
+</tr>
+<tr class="even">
+<td align="left">clef</td>
+<td align="left">microstructure</td>
+<td align="right">1</td>
+<td align="right">512</td>
+<td align="right">0.964</td>
+</tr>
+<tr class="odd">
+<td align="left">clef</td>
+<td align="left">pan_images</td>
+<td align="right">1</td>
+<td align="right">768</td>
+<td align="right">1.000</td>
+</tr>
+<tr class="even">
+<td align="left">clef</td>
+<td align="left">pipe_staple</td>
+<td align="right">1</td>
+<td align="right">768</td>
+<td align="right">1.000</td>
+</tr>
+<tr class="odd">
+<td align="left">clef</td>
+<td align="left">textiles</td>
+<td align="right">1</td>
+<td align="right">768</td>
+<td align="right">0.968</td>
+</tr>
+</tbody>
+</table>
+<p>No setting is the best for all models and datasets. On the extrusion
+images, the chosen setups use <code>k</code> = 1 (Jev), 4 (gpt-6-luna)
+and 4 (Clef-Flash). On the microstructures, they use <code>k</code> = 4,
+1 and 1. Images of 512 pixels need about 49 % of the input tokens of
+images of 768 pixels, and they were often as good. 22 of the 90 setups
+reach an AUC of 1, all on the pans and pipe staples. The tie rule then
+picks the setup with the fewest references. On the 12 learning images of
+the pans, an AUC of 1 says little.</p>
+<p>These AUCs are on the images that the grid chose on, so they are too
+high (see “Rows”). The calibration and test images give fresher
+estimates.</p>
+</div>
+<div id="calibration" class="section level2">
+<h2>Calibration</h2>
+<p>A calibrator corrects the probabilities of a model, so that they
+agree with the rates of defects. This vignette uses Platt scaling: a
+logistic regression of the truth on the logit of the probability of
+<code>defective</code>. It is fitted on the calibration images, with the
+chosen setup.</p>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" tabindex="-1"></a>calibration_rows <span class="ot">&lt;-</span> <span class="cf">function</span>(dataset, k) {</span>
+<span id="cb19-2"><a href="#cb19-2" tabindex="-1"></a>  rows <span class="ot">&lt;-</span> by_dataset[[dataset]]</span>
+<span id="cb19-3"><a href="#cb19-3" tabindex="-1"></a>  <span class="cf">if</span> (dataset <span class="sc">==</span> <span class="st">&quot;pan_images&quot;</span>) {</span>
+<span id="cb19-4"><a href="#cb19-4" tabindex="-1"></a>    dplyr<span class="sc">::</span><span class="fu">filter</span>(rows, role <span class="sc">==</span> <span class="st">&quot;learning&quot;</span> <span class="sc">|</span> (role <span class="sc">==</span> <span class="st">&quot;reference&quot;</span> <span class="sc">&amp;</span> rank <span class="sc">&gt;</span> k))</span>
+<span id="cb19-5"><a href="#cb19-5" tabindex="-1"></a>  } <span class="cf">else</span> {</span>
+<span id="cb19-6"><a href="#cb19-6" tabindex="-1"></a>    dplyr<span class="sc">::</span><span class="fu">filter</span>(rows, role <span class="sc">==</span> <span class="st">&quot;calibration&quot;</span>)</span>
+<span id="cb19-7"><a href="#cb19-7" tabindex="-1"></a>  }</span>
+<span id="cb19-8"><a href="#cb19-8" tabindex="-1"></a>}</span>
+<span id="cb19-9"><a href="#cb19-9" tabindex="-1"></a></span>
+<span id="cb19-10"><a href="#cb19-10" tabindex="-1"></a>score_calibration <span class="ot">&lt;-</span> <span class="cf">function</span>(model, dataset, normal, defective, k, max_size) {</span>
+<span id="cb19-11"><a href="#cb19-11" tabindex="-1"></a>  setup <span class="ot">&lt;-</span> <span class="fu">make_setup</span>(</span>
+<span id="cb19-12"><a href="#cb19-12" tabindex="-1"></a>    model, dataset, <span class="fu">c</span>(<span class="at">normal =</span> normal, <span class="at">defective =</span> defective), k, max_size</span>
+<span id="cb19-13"><a href="#cb19-13" tabindex="-1"></a>  )</span>
+<span id="cb19-14"><a href="#cb19-14" tabindex="-1"></a>  rows <span class="ot">&lt;-</span> <span class="fu">calibration_rows</span>(dataset, k)</span>
+<span id="cb19-15"><a href="#cb19-15" tabindex="-1"></a>  <span class="fu">score_rows</span>(setup, rows, <span class="fu">state_file</span>(<span class="st">&quot;calibration&quot;</span>, model, dataset, k, max_size))</span>
+<span id="cb19-16"><a href="#cb19-16" tabindex="-1"></a>}</span>
+<span id="cb19-17"><a href="#cb19-17" tabindex="-1"></a></span>
+<span id="cb19-18"><a href="#cb19-18" tabindex="-1"></a>calibration <span class="ot">&lt;-</span> dplyr<span class="sc">::</span><span class="fu">select</span>(chosen, model, dataset, normal, defective, k, max_size)</span></code></pre></div>
+<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" tabindex="-1"></a>calibration <span class="ot">&lt;-</span> calibration <span class="sc">|&gt;</span></span>
+<span id="cb20-2"><a href="#cb20-2" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">mutate</span>(<span class="at">result =</span> purrr<span class="sc">::</span><span class="fu">pmap</span>(</span>
+<span id="cb20-3"><a href="#cb20-3" tabindex="-1"></a>    <span class="fu">list</span>(model, dataset, normal, defective, k, max_size), score_calibration</span>
+<span id="cb20-4"><a href="#cb20-4" tabindex="-1"></a>  ))</span></code></pre></div>
+<p>Platt scaling does not fit the labels 0 and 1. With N+ defective and
+N- normal calibration images, its target is (N+ + 1) / (N+ + 2) for a
+defective image and 1 / (N- + 2) for a normal image. These targets keep
+the fit finite when a model ranks the few calibration images almost
+perfectly. A fit on the labels 0 and 1 then has no finite solution: its
+slope grows without limit, and the calibrated probabilities become 0 or
+1. The logistic calibrator of probably
+(<code>probably::cal_estimate_logistic()</code> with
+<code>smooth = FALSE</code>) fits the labels 0 and 1, so it saturates on
+so few, almost perfectly ranked calibration images. On the calibration
+images of this vignette, its <code>glm()</code> warns for 8 of the 15
+setups, and its calibrated probabilities come within 1e-12 of 0 or 1 for
+9 setups. The calibrators of probably fit well with more calibration
+images. The targets are not 0 or 1, so the fit uses
+<code>family = quasibinomial</code>. <code>clip()</code> keeps each
+probability between 0.005 and 0.995, the clamp of the original study, so
+that its logit stays between about -5.3 and 5.3.</p>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" tabindex="-1"></a>clip <span class="ot">&lt;-</span> <span class="cf">function</span>(prob) <span class="fu">pmin</span>(<span class="fu">pmax</span>(prob, <span class="fl">0.005</span>), <span class="fl">0.995</span>)</span>
+<span id="cb21-2"><a href="#cb21-2" tabindex="-1"></a></span>
+<span id="cb21-3"><a href="#cb21-3" tabindex="-1"></a>platt_fit <span class="ot">&lt;-</span> <span class="cf">function</span>(prob, truth) {</span>
+<span id="cb21-4"><a href="#cb21-4" tabindex="-1"></a>  n_defective <span class="ot">&lt;-</span> <span class="fu">sum</span>(truth <span class="sc">==</span> <span class="st">&quot;defective&quot;</span>)</span>
+<span id="cb21-5"><a href="#cb21-5" tabindex="-1"></a>  n_normal <span class="ot">&lt;-</span> <span class="fu">sum</span>(truth <span class="sc">==</span> <span class="st">&quot;normal&quot;</span>)</span>
+<span id="cb21-6"><a href="#cb21-6" tabindex="-1"></a>  target <span class="ot">&lt;-</span> dplyr<span class="sc">::</span><span class="fu">if_else</span>(</span>
+<span id="cb21-7"><a href="#cb21-7" tabindex="-1"></a>    truth <span class="sc">==</span> <span class="st">&quot;defective&quot;</span>, (n_defective <span class="sc">+</span> <span class="dv">1</span>) <span class="sc">/</span> (n_defective <span class="sc">+</span> <span class="dv">2</span>), <span class="dv">1</span> <span class="sc">/</span> (n_normal <span class="sc">+</span> <span class="dv">2</span>)</span>
+<span id="cb21-8"><a href="#cb21-8" tabindex="-1"></a>  )</span>
+<span id="cb21-9"><a href="#cb21-9" tabindex="-1"></a>  stats<span class="sc">::</span><span class="fu">glm</span>(target <span class="sc">~</span> stats<span class="sc">::</span><span class="fu">qlogis</span>(<span class="fu">clip</span>(prob)), <span class="at">family =</span> stats<span class="sc">::</span><span class="fu">quasibinomial</span>())</span>
+<span id="cb21-10"><a href="#cb21-10" tabindex="-1"></a>}</span>
+<span id="cb21-11"><a href="#cb21-11" tabindex="-1"></a></span>
+<span id="cb21-12"><a href="#cb21-12" tabindex="-1"></a>platt_apply <span class="ot">&lt;-</span> <span class="cf">function</span>(prob, intercept, slope) {</span>
+<span id="cb21-13"><a href="#cb21-13" tabindex="-1"></a>  stats<span class="sc">::</span><span class="fu">plogis</span>(intercept <span class="sc">+</span> slope <span class="sc">*</span> stats<span class="sc">::</span><span class="fu">qlogis</span>(<span class="fu">clip</span>(prob)))</span>
+<span id="cb21-14"><a href="#cb21-14" tabindex="-1"></a>}</span></code></pre></div>
+<p><code>platt_row()</code> fits the Platt scaling of one setup and
+keeps its two coefficients and the class counts.</p>
+<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" tabindex="-1"></a>platt_row <span class="ot">&lt;-</span> <span class="cf">function</span>(model, dataset, k, result, ...) {</span>
+<span id="cb22-2"><a href="#cb22-2" tabindex="-1"></a>  truth <span class="ot">&lt;-</span> <span class="fu">calibration_rows</span>(dataset, k)<span class="sc">$</span>truth</span>
+<span id="cb22-3"><a href="#cb22-3" tabindex="-1"></a>  fit <span class="ot">&lt;-</span> <span class="fu">platt_fit</span>(result<span class="sc">$</span>answers[[<span class="dv">1</span>]]<span class="sc">$</span>.pred_defective, truth)</span>
+<span id="cb22-4"><a href="#cb22-4" tabindex="-1"></a>  tibble<span class="sc">::</span><span class="fu">tibble</span>(</span>
+<span id="cb22-5"><a href="#cb22-5" tabindex="-1"></a>    <span class="at">model =</span> model, <span class="at">dataset =</span> dataset,</span>
+<span id="cb22-6"><a href="#cb22-6" tabindex="-1"></a>    <span class="at">n_normal =</span> <span class="fu">sum</span>(truth <span class="sc">==</span> <span class="st">&quot;normal&quot;</span>), <span class="at">n_defective =</span> <span class="fu">sum</span>(truth <span class="sc">==</span> <span class="st">&quot;defective&quot;</span>),</span>
+<span id="cb22-7"><a href="#cb22-7" tabindex="-1"></a>    <span class="at">intercept =</span> stats<span class="sc">::</span><span class="fu">coef</span>(fit)[[<span class="dv">1</span>]], <span class="at">slope =</span> stats<span class="sc">::</span><span class="fu">coef</span>(fit)[[<span class="dv">2</span>]]</span>
+<span id="cb22-8"><a href="#cb22-8" tabindex="-1"></a>  )</span>
+<span id="cb22-9"><a href="#cb22-9" tabindex="-1"></a>}</span>
+<span id="cb22-10"><a href="#cb22-10" tabindex="-1"></a></span>
+<span id="cb22-11"><a href="#cb22-11" tabindex="-1"></a>platt <span class="ot">&lt;-</span> calibration <span class="sc">|&gt;</span></span>
+<span id="cb22-12"><a href="#cb22-12" tabindex="-1"></a>  purrr<span class="sc">::</span><span class="fu">pmap</span>(platt_row) <span class="sc">|&gt;</span></span>
+<span id="cb22-13"><a href="#cb22-13" tabindex="-1"></a>  purrr<span class="sc">::</span><span class="fu">list_rbind</span>()</span></code></pre></div>
+<p>The setups keep no calibrator. <code>write_setup()</code> saves each
+setup as one JSON file, and the Platt fits stay in the saved results. So
+<code>evaluate_once()</code> scores the raw probabilities, and
+<code>platt_apply()</code> maps them to calibrated ones. (A setup can
+hold a probably calibrator when there are enough calibration images for
+it. Set it with <code>setup@calibrator &lt;- calibrator</code>; this
+works also for a setup from <code>read_setup()</code>.)</p>
+<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" tabindex="-1"></a>calibration <span class="sc">|&gt;</span></span>
+<span id="cb23-2"><a href="#cb23-2" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(model, dataset, normal, defective, k, max_size) <span class="sc">|&gt;</span></span>
+<span id="cb23-3"><a href="#cb23-3" tabindex="-1"></a>  purrr<span class="sc">::</span><span class="fu">pwalk</span>(\(model, dataset, normal, defective, k, max_size) {</span>
+<span id="cb23-4"><a href="#cb23-4" tabindex="-1"></a>    setup <span class="ot">&lt;-</span> <span class="fu">make_setup</span>(</span>
+<span id="cb23-5"><a href="#cb23-5" tabindex="-1"></a>      model, dataset, <span class="fu">c</span>(<span class="at">normal =</span> normal, <span class="at">defective =</span> defective), k, max_size</span>
+<span id="cb23-6"><a href="#cb23-6" tabindex="-1"></a>    )</span>
+<span id="cb23-7"><a href="#cb23-7" tabindex="-1"></a>    <span class="fu">write_setup</span>(setup, <span class="fu">file.path</span>(setup_dir, <span class="fu">paste0</span>(model, <span class="st">&quot;_&quot;</span>, dataset, <span class="st">&quot;.json&quot;</span>)))</span>
+<span id="cb23-8"><a href="#cb23-8" tabindex="-1"></a>  })</span></code></pre></div>
+<p>The Platt fits, with the smallest fitted value and the distance of
+the largest fitted value from 1, on the calibration images:</p>
+<table>
+<colgroup>
+<col width="8%" />
+<col width="17%" />
+<col width="10%" />
+<col width="14%" />
+<col width="11%" />
+<col width="7%" />
+<col width="12%" />
+<col width="17%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">model</th>
+<th align="left">dataset</th>
+<th align="right">n_normal</th>
+<th align="right">n_defective</th>
+<th align="right">intercept</th>
+<th align="right">slope</th>
+<th align="left">min_fitted</th>
+<th align="left">1 - max_fitted</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">jev</td>
+<td align="left">extrusion</td>
+<td align="right">25</td>
+<td align="right">25</td>
+<td align="right">-0.435</td>
+<td align="right">0.550</td>
+<td align="left">0.284</td>
+<td align="left">0.186</td>
+</tr>
+<tr class="even">
+<td align="left">jev</td>
+<td align="left">microstructure</td>
+<td align="right">25</td>
+<td align="right">25</td>
+<td align="right">1.294</td>
+<td align="right">1.438</td>
+<td align="left">0.0813</td>
+<td align="left">0.000136</td>
+</tr>
+<tr class="odd">
+<td align="left">jev</td>
+<td align="left">pan_images</td>
+<td align="right">9</td>
+<td align="right">9</td>
+<td align="right">-0.349</td>
+<td align="right">0.888</td>
+<td align="left">0.107</td>
+<td align="left">0.0427</td>
+</tr>
+<tr class="even">
+<td align="left">jev</td>
+<td align="left">pipe_staple</td>
+<td align="right">17</td>
+<td align="right">17</td>
+<td align="right">-1.188</td>
+<td align="right">2.315</td>
+<td align="left">0.0105</td>
+<td align="left">0.0114</td>
+</tr>
+<tr class="odd">
+<td align="left">jev</td>
+<td align="left">textiles</td>
+<td align="right">25</td>
+<td align="right">25</td>
+<td align="right">-3.124</td>
+<td align="right">2.759</td>
+<td align="left">0.00891</td>
+<td align="left">7.1e-05</td>
+</tr>
+<tr class="even">
+<td align="left">openai</td>
+<td align="left">extrusion</td>
+<td align="right">25</td>
+<td align="right">25</td>
+<td align="right">-1.863</td>
+<td align="right">0.533</td>
+<td align="left">0.1</td>
+<td align="left">0.277</td>
+</tr>
+<tr class="odd">
+<td align="left">openai</td>
+<td align="left">microstructure</td>
+<td align="right">25</td>
+<td align="right">25</td>
+<td align="right">4.235</td>
+<td align="right">1.462</td>
+<td align="left">0.0292</td>
+<td align="left">1.75e-05</td>
+</tr>
+<tr class="even">
+<td align="left">openai</td>
+<td align="left">pan_images</td>
+<td align="right">9</td>
+<td align="right">9</td>
+<td align="right">-0.403</td>
+<td align="right">0.678</td>
+<td align="left">0.0456</td>
+<td align="left">0.0397</td>
+</tr>
+<tr class="odd">
+<td align="left">openai</td>
+<td align="left">pipe_staple</td>
+<td align="right">17</td>
+<td align="right">17</td>
+<td align="right">-0.998</td>
+<td align="right">1.634</td>
+<td align="left">0.0186</td>
+<td align="left">0.00917</td>
+</tr>
+<tr class="even">
+<td align="left">openai</td>
+<td align="left">textiles</td>
+<td align="right">25</td>
+<td align="right">25</td>
+<td align="right">-1.618</td>
+<td align="right">2.951</td>
+<td align="left">0.035</td>
+<td align="left">6.53e-06</td>
+</tr>
+<tr class="odd">
+<td align="left">clef</td>
+<td align="left">extrusion</td>
+<td align="right">25</td>
+<td align="right">25</td>
+<td align="right">3.758</td>
+<td align="right">4.175</td>
+<td align="left">0.0271</td>
+<td align="left">0.0456</td>
+</tr>
+<tr class="even">
+<td align="left">clef</td>
+<td align="left">microstructure</td>
+<td align="right">25</td>
+<td align="right">25</td>
+<td align="right">5.282</td>
+<td align="right">2.811</td>
+<td align="left">0.114</td>
+<td align="left">0.000176</td>
+</tr>
+<tr class="odd">
+<td align="left">clef</td>
+<td align="left">pan_images</td>
+<td align="right">9</td>
+<td align="right">9</td>
+<td align="right">0.596</td>
+<td align="right">0.944</td>
+<td align="left">0.115</td>
+<td align="left">0.0538</td>
+</tr>
+<tr class="even">
+<td align="left">clef</td>
+<td align="left">pipe_staple</td>
+<td align="right">17</td>
+<td align="right">17</td>
+<td align="right">-3.484</td>
+<td align="right">5.166</td>
+<td align="left">0.000308</td>
+<td align="left">0.0118</td>
+</tr>
+<tr class="odd">
+<td align="left">clef</td>
+<td align="left">textiles</td>
+<td align="right">25</td>
+<td align="right">25</td>
+<td align="right">7.770</td>
+<td align="right">6.926</td>
+<td align="left">0.00974</td>
+<td align="left">2.34e-06</td>
+</tr>
+</tbody>
+</table>
+<p>All 15 fits converged, and <code>glm()</code> gave no warning. No
+fitted value reaches 0 or 1: the fitted values lie between 3.1e-04 and 1
+- 2.3e-06. No fitted value lies within 1e-6 of 0 or 1. The clamp limits
+the logit, so it also limits the calibrated probability of any raw
+probability. But a steep fit multiplies the logit by its slope (up to
+6.9, for Clef-Flash on the textiles). So at the clamp limits, 2 fits
+(Clef-Flash on the pipe staples and Clef-Flash on the textiles) give a
+calibrated probability within 1e-12 of 0 or 1.</p>
+<p>The calibrated metrics:</p>
+<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" tabindex="-1"></a>calibration_metrics <span class="ot">&lt;-</span> <span class="cf">function</span>(model, dataset, k, result, intercept, slope,</span>
+<span id="cb24-2"><a href="#cb24-2" tabindex="-1"></a>                                ...) {</span>
+<span id="cb24-3"><a href="#cb24-3" tabindex="-1"></a>  answers <span class="ot">&lt;-</span> dplyr<span class="sc">::</span><span class="fu">mutate</span>(</span>
+<span id="cb24-4"><a href="#cb24-4" tabindex="-1"></a>    result<span class="sc">$</span>answers[[<span class="dv">1</span>]], <span class="at">truth =</span> <span class="fu">calibration_rows</span>(dataset, k)<span class="sc">$</span>truth</span>
+<span id="cb24-5"><a href="#cb24-5" tabindex="-1"></a>  )</span>
+<span id="cb24-6"><a href="#cb24-6" tabindex="-1"></a>  calibrated <span class="ot">&lt;-</span> dplyr<span class="sc">::</span><span class="fu">mutate</span>(</span>
+<span id="cb24-7"><a href="#cb24-7" tabindex="-1"></a>    answers, <span class="at">.pred_defective =</span> <span class="fu">platt_apply</span>(.pred_defective, intercept, slope)</span>
+<span id="cb24-8"><a href="#cb24-8" tabindex="-1"></a>  )</span>
+<span id="cb24-9"><a href="#cb24-9" tabindex="-1"></a>  metrics <span class="ot">&lt;-</span> yardstick<span class="sc">::</span><span class="fu">metric_set</span>(</span>
+<span id="cb24-10"><a href="#cb24-10" tabindex="-1"></a>    yardstick<span class="sc">::</span>roc_auc, yardstick<span class="sc">::</span>brier_class, yardstick<span class="sc">::</span>mn_log_loss</span>
+<span id="cb24-11"><a href="#cb24-11" tabindex="-1"></a>  )</span>
+<span id="cb24-12"><a href="#cb24-12" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">bind_rows</span>(</span>
+<span id="cb24-13"><a href="#cb24-13" tabindex="-1"></a>    <span class="at">before =</span> <span class="fu">metrics</span>(answers, truth, .pred_defective, <span class="at">event_level =</span> <span class="st">&quot;second&quot;</span>),</span>
+<span id="cb24-14"><a href="#cb24-14" tabindex="-1"></a>    <span class="at">after =</span> <span class="fu">metrics</span>(calibrated, truth, .pred_defective, <span class="at">event_level =</span> <span class="st">&quot;second&quot;</span>),</span>
+<span id="cb24-15"><a href="#cb24-15" tabindex="-1"></a>    <span class="at">.id =</span> <span class="st">&quot;probabilities&quot;</span></span>
+<span id="cb24-16"><a href="#cb24-16" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb24-17"><a href="#cb24-17" tabindex="-1"></a>    dplyr<span class="sc">::</span><span class="fu">mutate</span>(<span class="at">model =</span> model, <span class="at">dataset =</span> dataset, <span class="at">n =</span> <span class="fu">nrow</span>(answers), <span class="at">.before =</span> <span class="dv">1</span>)</span>
+<span id="cb24-18"><a href="#cb24-18" tabindex="-1"></a>}</span>
+<span id="cb24-19"><a href="#cb24-19" tabindex="-1"></a></span>
+<span id="cb24-20"><a href="#cb24-20" tabindex="-1"></a>calibration_summary <span class="ot">&lt;-</span> calibration <span class="sc">|&gt;</span></span>
+<span id="cb24-21"><a href="#cb24-21" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">left_join</span>(platt, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">&quot;model&quot;</span>, <span class="st">&quot;dataset&quot;</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb24-22"><a href="#cb24-22" tabindex="-1"></a>  purrr<span class="sc">::</span><span class="fu">pmap</span>(calibration_metrics) <span class="sc">|&gt;</span></span>
+<span id="cb24-23"><a href="#cb24-23" tabindex="-1"></a>  purrr<span class="sc">::</span><span class="fu">list_rbind</span>()</span></code></pre></div>
+<p>The table gives the AUC of the chosen setup on the calibration
+images, and the Brier score and the log loss before and after Platt
+scaling. A lower Brier score and a lower log loss are better. Platt
+scaling is strictly increasing between the clamp limits (its slope is
+positive in all 15 fits), so it keeps the order of the images there. Raw
+probabilities below 0.005, or above 0.995, become equal. On the
+calibration images, the AUC after Platt scaling is the same as before
+for all 15 setups. The AUC of the test comes from the raw
+probabilities.</p>
+<table>
+<colgroup>
+<col width="8%" />
+<col width="17%" />
+<col width="3%" />
+<col width="6%" />
+<col width="14%" />
+<col width="13%" />
+<col width="18%" />
+<col width="17%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">model</th>
+<th align="left">dataset</th>
+<th align="right">n</th>
+<th align="right">auc</th>
+<th align="right">brier_before</th>
+<th align="right">brier_after</th>
+<th align="right">log_loss_before</th>
+<th align="right">log_loss_after</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">jev</td>
+<td align="left">extrusion</td>
+<td align="right">50</td>
+<td align="right">0.607</td>
+<td align="right">0.270</td>
+<td align="right">0.239</td>
+<td align="right">0.747</td>
+<td align="right">0.670</td>
+</tr>
+<tr class="even">
+<td align="left">jev</td>
+<td align="left">microstructure</td>
+<td align="right">50</td>
+<td align="right">0.973</td>
+<td align="right">0.091</td>
+<td align="right">0.064</td>
+<td align="right">0.298</td>
+<td align="right">0.227</td>
+</tr>
+<tr class="odd">
+<td align="left">jev</td>
+<td align="left">pan_images</td>
+<td align="right">18</td>
+<td align="right">1.000</td>
+<td align="right">0.030</td>
+<td align="right">0.034</td>
+<td align="right">0.147</td>
+<td align="right">0.163</td>
+</tr>
+<tr class="even">
+<td align="left">jev</td>
+<td align="left">pipe_staple</td>
+<td align="right">34</td>
+<td align="right">1.000</td>
+<td align="right">0.071</td>
+<td align="right">0.012</td>
+<td align="right">0.287</td>
+<td align="right">0.083</td>
+</tr>
+<tr class="odd">
+<td align="left">jev</td>
+<td align="left">textiles</td>
+<td align="right">50</td>
+<td align="right">0.991</td>
+<td align="right">0.163</td>
+<td align="right">0.033</td>
+<td align="right">0.467</td>
+<td align="right">0.138</td>
+</tr>
+<tr class="even">
+<td align="left">openai</td>
+<td align="left">extrusion</td>
+<td align="right">50</td>
+<td align="right">0.765</td>
+<td align="right">0.357</td>
+<td align="right">0.193</td>
+<td align="right">3.840</td>
+<td align="right">0.569</td>
+</tr>
+<tr class="odd">
+<td align="left">openai</td>
+<td align="left">microstructure</td>
+<td align="right">50</td>
+<td align="right">0.986</td>
+<td align="right">0.229</td>
+<td align="right">0.052</td>
+<td align="right">0.673</td>
+<td align="right">0.186</td>
+</tr>
+<tr class="even">
+<td align="left">openai</td>
+<td align="left">pan_images</td>
+<td align="right">18</td>
+<td align="right">1.000</td>
+<td align="right">0.012</td>
+<td align="right">0.024</td>
+<td align="right">0.078</td>
+<td align="right">0.137</td>
+</tr>
+<tr class="odd">
+<td align="left">openai</td>
+<td align="left">pipe_staple</td>
+<td align="right">34</td>
+<td align="right">0.978</td>
+<td align="right">0.113</td>
+<td align="right">0.081</td>
+<td align="right">0.374</td>
+<td align="right">0.266</td>
+</tr>
+<tr class="even">
+<td align="left">openai</td>
+<td align="left">textiles</td>
+<td align="right">50</td>
+<td align="right">0.942</td>
+<td align="right">0.170</td>
+<td align="right">0.101</td>
+<td align="right">0.505</td>
+<td align="right">0.326</td>
+</tr>
+<tr class="odd">
+<td align="left">clef</td>
+<td align="left">extrusion</td>
+<td align="right">50</td>
+<td align="right">0.849</td>
+<td align="right">0.256</td>
+<td align="right">0.161</td>
+<td align="right">0.702</td>
+<td align="right">0.496</td>
+</tr>
+<tr class="even">
+<td align="left">clef</td>
+<td align="left">microstructure</td>
+<td align="right">50</td>
+<td align="right">0.957</td>
+<td align="right">0.217</td>
+<td align="right">0.078</td>
+<td align="right">0.633</td>
+<td align="right">0.271</td>
+</tr>
+<tr class="odd">
+<td align="left">clef</td>
+<td align="left">pan_images</td>
+<td align="right">18</td>
+<td align="right">1.000</td>
+<td align="right">0.035</td>
+<td align="right">0.027</td>
+<td align="right">0.150</td>
+<td align="right">0.142</td>
+</tr>
+<tr class="even">
+<td align="left">clef</td>
+<td align="left">pipe_staple</td>
+<td align="right">34</td>
+<td align="right">1.000</td>
+<td align="right">0.167</td>
+<td align="right">0.018</td>
+<td align="right">0.508</td>
+<td align="right">0.103</td>
+</tr>
+<tr class="odd">
+<td align="left">clef</td>
+<td align="left">textiles</td>
+<td align="right">50</td>
+<td align="right">0.996</td>
+<td align="right">0.212</td>
+<td align="right">0.036</td>
+<td align="right">0.598</td>
+<td align="right">0.147</td>
+</tr>
+</tbody>
+</table>
+<p>Platt scaling is fitted and measured on the same images, so the
+numbers “after” are too good. The test images give the honest
+numbers.</p>
+<p>The calibration images are new to the chosen setup (not for the pans:
+their calibration rows include the grid images), so their AUC is a first
+check of the choices. On most datasets, the AUC stays close to the AUC
+of the grid. On the extrusion images, the AUC of Jev falls from 0.77
+(grid) to 0.61. This agrees with the effect that “Rows” describes: the
+choices fit the learning images better than new images. Chance plays a
+part too, because 50 images give a rough AUC.</p>
+<p>Before calibration, the probabilities of the models are often too
+extreme. For gpt-6-luna on the extrusion images, the log loss is 3.84:
+the model gave probabilities near 0 or 1 to images of the other class.
+Platt scaling moves such probabilities toward the rates of defects, and
+the log loss falls to 0.57.</p>
+<p>For Jev on the pans, Jev on the pipe staples, gpt-6-luna on the pans,
+Clef-Flash on the pans, and Clef-Flash on the pipe staples, the chosen
+setup separates the two classes of the calibration images fully (AUC 1).
+Their Platt fits stay finite, so their Brier score and log loss “after”
+stay above 0. The targets of Platt pull the probabilities a little away
+from 0 and 1. Where the raw probabilities are already good, this can
+make the numbers “after” worse: the Brier score or the log loss goes up
+for Jev on the pans and gpt-6-luna on the pans.</p>
+</div>
+<div id="folds" class="section level2">
+<h2>Folds</h2>
+<p>How much does an AUC move from one sample of images to another?
+Cross-validation splits the learning images of the chosen setup into 5
+folds, 10 times (<code>rsample::vfold_cv()</code>, with the classes in
+the same ratio in each fold). Each fold gives the AUC of its fifth of
+the images. No model is fitted, and no call is sent: the folds use the
+saved probabilities of the grid.</p>
+<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" tabindex="-1"></a>fold_auc <span class="ot">&lt;-</span> <span class="cf">function</span>(model, dataset, answers) {</span>
+<span id="cb25-2"><a href="#cb25-2" tabindex="-1"></a>  learning <span class="ot">&lt;-</span> dplyr<span class="sc">::</span><span class="fu">filter</span>(by_dataset[[dataset]], role <span class="sc">==</span> <span class="st">&quot;learning&quot;</span>)</span>
+<span id="cb25-3"><a href="#cb25-3" tabindex="-1"></a>  scored <span class="ot">&lt;-</span> dplyr<span class="sc">::</span><span class="fu">mutate</span>(answers, <span class="at">truth =</span> learning<span class="sc">$</span>truth)</span>
+<span id="cb25-4"><a href="#cb25-4" tabindex="-1"></a>  <span class="fu">set.seed</span>(<span class="dv">2026</span>)</span>
+<span id="cb25-5"><a href="#cb25-5" tabindex="-1"></a>  rsample<span class="sc">::</span><span class="fu">vfold_cv</span>(scored, <span class="at">v =</span> <span class="dv">5</span>, <span class="at">repeats =</span> <span class="dv">10</span>, <span class="at">strata =</span> truth) <span class="sc">|&gt;</span></span>
+<span id="cb25-6"><a href="#cb25-6" tabindex="-1"></a>    dplyr<span class="sc">::</span><span class="fu">mutate</span>(</span>
+<span id="cb25-7"><a href="#cb25-7" tabindex="-1"></a>      <span class="at">model =</span> model, <span class="at">dataset =</span> dataset,</span>
+<span id="cb25-8"><a href="#cb25-8" tabindex="-1"></a>      <span class="at">auc =</span> purrr<span class="sc">::</span><span class="fu">map_dbl</span>(splits, \(split) {</span>
+<span id="cb25-9"><a href="#cb25-9" tabindex="-1"></a>        held_out <span class="ot">&lt;-</span> rsample<span class="sc">::</span><span class="fu">assessment</span>(split)</span>
+<span id="cb25-10"><a href="#cb25-10" tabindex="-1"></a>        yardstick<span class="sc">::</span><span class="fu">roc_auc_vec</span>(</span>
+<span id="cb25-11"><a href="#cb25-11" tabindex="-1"></a>          held_out<span class="sc">$</span>truth, held_out<span class="sc">$</span>.pred_defective, <span class="at">event_level =</span> <span class="st">&quot;second&quot;</span></span>
+<span id="cb25-12"><a href="#cb25-12" tabindex="-1"></a>        )</span>
+<span id="cb25-13"><a href="#cb25-13" tabindex="-1"></a>      })</span>
+<span id="cb25-14"><a href="#cb25-14" tabindex="-1"></a>    ) <span class="sc">|&gt;</span></span>
+<span id="cb25-15"><a href="#cb25-15" tabindex="-1"></a>    dplyr<span class="sc">::</span><span class="fu">select</span>(model, dataset, id, id2, auc)</span>
+<span id="cb25-16"><a href="#cb25-16" tabindex="-1"></a>}</span>
+<span id="cb25-17"><a href="#cb25-17" tabindex="-1"></a></span>
+<span id="cb25-18"><a href="#cb25-18" tabindex="-1"></a>folds <span class="ot">&lt;-</span> chosen <span class="sc">|&gt;</span></span>
+<span id="cb25-19"><a href="#cb25-19" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(model, dataset, answers) <span class="sc">|&gt;</span></span>
+<span id="cb25-20"><a href="#cb25-20" tabindex="-1"></a>  purrr<span class="sc">::</span><span class="fu">pmap</span>(fold_auc) <span class="sc">|&gt;</span></span>
+<span id="cb25-21"><a href="#cb25-21" tabindex="-1"></a>  purrr<span class="sc">::</span><span class="fu">list_rbind</span>()</span></code></pre></div>
+<table>
+<thead>
+<tr class="header">
+<th align="left">model</th>
+<th align="left">dataset</th>
+<th align="right">folds</th>
+<th align="right">mean</th>
+<th align="right">sd</th>
+<th align="right">min</th>
+<th align="right">max</th>
+<th align="right">grid_auc</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">jev</td>
+<td align="left">extrusion</td>
+<td align="right">50</td>
+<td align="right">0.771</td>
+<td align="right">0.088</td>
+<td align="right">0.586</td>
+<td align="right">0.951</td>
+<td align="right">0.771</td>
+</tr>
+<tr class="even">
+<td align="left">jev</td>
+<td align="left">microstructure</td>
+<td align="right">50</td>
+<td align="right">0.938</td>
+<td align="right">0.050</td>
+<td align="right">0.784</td>
+<td align="right">1.000</td>
+<td align="right">0.937</td>
+</tr>
+<tr class="odd">
+<td align="left">jev</td>
+<td align="left">pan_images</td>
+<td align="right">50</td>
+<td align="right">1.000</td>
+<td align="right">0.000</td>
+<td align="right">1.000</td>
+<td align="right">1.000</td>
+<td align="right">1.000</td>
+</tr>
+<tr class="even">
+<td align="left">jev</td>
+<td align="left">pipe_staple</td>
+<td align="right">50</td>
+<td align="right">0.999</td>
+<td align="right">0.003</td>
+<td align="right">0.988</td>
+<td align="right">1.000</td>
+<td align="right">1.000</td>
+</tr>
+<tr class="odd">
+<td align="left">jev</td>
+<td align="left">textiles</td>
+<td align="right">50</td>
+<td align="right">0.999</td>
+<td align="right">0.003</td>
+<td align="right">0.988</td>
+<td align="right">1.000</td>
+<td align="right">0.999</td>
+</tr>
+<tr class="even">
+<td align="left">openai</td>
+<td align="left">extrusion</td>
+<td align="right">50</td>
+<td align="right">0.811</td>
+<td align="right">0.095</td>
+<td align="right">0.543</td>
+<td align="right">0.981</td>
+<td align="right">0.812</td>
+</tr>
+<tr class="odd">
+<td align="left">openai</td>
+<td align="left">microstructure</td>
+<td align="right">50</td>
+<td align="right">0.960</td>
+<td align="right">0.033</td>
+<td align="right">0.858</td>
+<td align="right">1.000</td>
+<td align="right">0.960</td>
+</tr>
+<tr class="even">
+<td align="left">openai</td>
+<td align="left">pan_images</td>
+<td align="right">50</td>
+<td align="right">1.000</td>
+<td align="right">0.000</td>
+<td align="right">1.000</td>
+<td align="right">1.000</td>
+<td align="right">1.000</td>
+</tr>
+<tr class="odd">
+<td align="left">openai</td>
+<td align="left">pipe_staple</td>
+<td align="right">50</td>
+<td align="right">1.000</td>
+<td align="right">0.000</td>
+<td align="right">1.000</td>
+<td align="right">1.000</td>
+<td align="right">1.000</td>
+</tr>
+<tr class="even">
+<td align="left">openai</td>
+<td align="left">textiles</td>
+<td align="right">50</td>
+<td align="right">0.976</td>
+<td align="right">0.033</td>
+<td align="right">0.833</td>
+<td align="right">1.000</td>
+<td align="right">0.977</td>
+</tr>
+<tr class="odd">
+<td align="left">clef</td>
+<td align="left">extrusion</td>
+<td align="right">50</td>
+<td align="right">0.834</td>
+<td align="right">0.084</td>
+<td align="right">0.636</td>
+<td align="right">1.000</td>
+<td align="right">0.829</td>
+</tr>
+<tr class="even">
+<td align="left">clef</td>
+<td align="left">microstructure</td>
+<td align="right">50</td>
+<td align="right">0.964</td>
+<td align="right">0.033</td>
+<td align="right">0.864</td>
+<td align="right">1.000</td>
+<td align="right">0.964</td>
+</tr>
+<tr class="odd">
+<td align="left">clef</td>
+<td align="left">pan_images</td>
+<td align="right">50</td>
+<td align="right">1.000</td>
+<td align="right">0.000</td>
+<td align="right">1.000</td>
+<td align="right">1.000</td>
+<td align="right">1.000</td>
+</tr>
+<tr class="even">
+<td align="left">clef</td>
+<td align="left">pipe_staple</td>
+<td align="right">50</td>
+<td align="right">1.000</td>
+<td align="right">0.000</td>
+<td align="right">1.000</td>
+<td align="right">1.000</td>
+<td align="right">1.000</td>
+</tr>
+<tr class="odd">
+<td align="left">clef</td>
+<td align="left">textiles</td>
+<td align="right">50</td>
+<td align="right">0.968</td>
+<td align="right">0.032</td>
+<td align="right">0.840</td>
+<td align="right">1.000</td>
+<td align="right">0.968</td>
+</tr>
+</tbody>
+</table>
+<p>The mean of the fold AUCs is close to the AUC of the grid, as it
+should be: the folds split the same images. The spread is the useful
+part. On the extrusion images, the AUC of about 18 images has a standard
+deviation of about 0.09, and it goes from 0.54 to 1.00 over the three
+models. On the microstructures and the textiles, the standard deviation
+is 0.05 or less. The standard deviation of an AUC falls about as 1 /
+sqrt(n). So for the 92 learning images of the extrusion, it is about
+0.09 / sqrt(5), that is about 0.04: a difference of a few hundredths
+between two setups can come from chance. The pans give an AUC of 1 in
+100 % of the folds, and the pipe staples in 97 %, so their folds show
+almost no spread.</p>
+</div>
+<div id="test" class="section level2">
+<h2>Test</h2>
+<p>The test images give the final estimate of each chosen setup. No step
+above used them: the descriptions, the image settings and the Platt fits
+were fixed before the test. Before the run, the script
+<code>study_again.R</code> checks that no learning, reference or
+calibration image has the path or the bytes (md5) of a test image. This
+check also shows that two extrusion test images are the same file, byte
+for byte; both stay in the test set. The numbers below come from one run
+on the test images, on 2026-10-24.</p>
+<p><code>evaluate_once()</code> reads the saved setup, which holds no
+calibrator, and scores the test images one time. So its AUC is the AUC
+of the raw probabilities. It writes the result to <code>path</code> and
+refuses to run again while that file exists. <code>score_test()</code>
+reads the result file when it exists, so a second run of this code sends
+no request and gives the same numbers.</p>
+<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" tabindex="-1"></a>test_file <span class="ot">&lt;-</span> <span class="cf">function</span>(model, dataset) {</span>
+<span id="cb26-2"><a href="#cb26-2" tabindex="-1"></a>  <span class="fu">file.path</span>(test_dir, <span class="fu">paste0</span>(model, <span class="st">&quot;_&quot;</span>, dataset, <span class="st">&quot;.rds&quot;</span>))</span>
+<span id="cb26-3"><a href="#cb26-3" tabindex="-1"></a>}</span>
+<span id="cb26-4"><a href="#cb26-4" tabindex="-1"></a></span>
+<span id="cb26-5"><a href="#cb26-5" tabindex="-1"></a>score_test <span class="ot">&lt;-</span> <span class="cf">function</span>(model, dataset) {</span>
+<span id="cb26-6"><a href="#cb26-6" tabindex="-1"></a>  path <span class="ot">&lt;-</span> <span class="fu">test_file</span>(model, dataset)</span>
+<span id="cb26-7"><a href="#cb26-7" tabindex="-1"></a>  <span class="cf">if</span> (<span class="fu">file.exists</span>(path)) {</span>
+<span id="cb26-8"><a href="#cb26-8" tabindex="-1"></a>    <span class="co"># The test rows were scored: read the result. No request goes out.</span></span>
+<span id="cb26-9"><a href="#cb26-9" tabindex="-1"></a>    <span class="fu">return</span>(dplyr<span class="sc">::</span><span class="fu">mutate</span>(<span class="fu">readRDS</span>(path), <span class="at">calls =</span> <span class="dv">0</span>))</span>
+<span id="cb26-10"><a href="#cb26-10" tabindex="-1"></a>  }</span>
+<span id="cb26-11"><a href="#cb26-11" tabindex="-1"></a>  setup <span class="ot">&lt;-</span> <span class="fu">read_setup</span>(<span class="fu">file.path</span>(setup_dir, <span class="fu">paste0</span>(model, <span class="st">&quot;_&quot;</span>, dataset, <span class="st">&quot;.json&quot;</span>)))</span>
+<span id="cb26-12"><a href="#cb26-12" tabindex="-1"></a>  test <span class="ot">&lt;-</span> dplyr<span class="sc">::</span><span class="fu">filter</span>(by_dataset[[dataset]], role <span class="sc">==</span> <span class="st">&quot;test&quot;</span>)</span>
+<span id="cb26-13"><a href="#cb26-13" tabindex="-1"></a>  <span class="fu">evaluate_once</span>(</span>
+<span id="cb26-14"><a href="#cb26-14" tabindex="-1"></a>    setup, <span class="at">image =</span> test<span class="sc">$</span>path, <span class="at">truth =</span> test<span class="sc">$</span>truth, <span class="at">event =</span> <span class="st">&quot;defective&quot;</span>,</span>
+<span id="cb26-15"><a href="#cb26-15" tabindex="-1"></a>    <span class="at">path =</span> path</span>
+<span id="cb26-16"><a href="#cb26-16" tabindex="-1"></a>  )</span>
+<span id="cb26-17"><a href="#cb26-17" tabindex="-1"></a>}</span></code></pre></div>
+<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" tabindex="-1"></a>test <span class="ot">&lt;-</span> chosen <span class="sc">|&gt;</span></span>
+<span id="cb27-2"><a href="#cb27-2" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(model, dataset) <span class="sc">|&gt;</span></span>
+<span id="cb27-3"><a href="#cb27-3" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">mutate</span>(<span class="at">result =</span> purrr<span class="sc">::</span><span class="fu">map2</span>(model, dataset, score_test))</span></code></pre></div>
+<p>The Platt fit of each setup then gives the calibrated probabilities
+of the test images. <code>test_metrics()</code> computes with yardstick
+the AUC, the accuracy, the sensitivity (the share of defective images
+that the setup finds) and the specificity (the share of normal images
+that it passes) at a probability of 0.5, the Brier score and the log
+loss. It computes them before Platt scaling (<code>raw</code>) and after
+it (<code>calibrated</code>).</p>
+<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" tabindex="-1"></a>at_half <span class="ot">&lt;-</span> <span class="cf">function</span>(prob) {</span>
+<span id="cb28-2"><a href="#cb28-2" tabindex="-1"></a>  <span class="fu">factor</span>(</span>
+<span id="cb28-3"><a href="#cb28-3" tabindex="-1"></a>    dplyr<span class="sc">::</span><span class="fu">if_else</span>(prob <span class="sc">&gt;=</span> <span class="fl">0.5</span>, <span class="st">&quot;defective&quot;</span>, <span class="st">&quot;normal&quot;</span>),</span>
+<span id="cb28-4"><a href="#cb28-4" tabindex="-1"></a>    <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">&quot;normal&quot;</span>, <span class="st">&quot;defective&quot;</span>)</span>
+<span id="cb28-5"><a href="#cb28-5" tabindex="-1"></a>  )</span>
+<span id="cb28-6"><a href="#cb28-6" tabindex="-1"></a>}</span>
+<span id="cb28-7"><a href="#cb28-7" tabindex="-1"></a></span>
+<span id="cb28-8"><a href="#cb28-8" tabindex="-1"></a>test_metrics <span class="ot">&lt;-</span> <span class="cf">function</span>(model, dataset, result, intercept, slope, ...) {</span>
+<span id="cb28-9"><a href="#cb28-9" tabindex="-1"></a>  truth <span class="ot">&lt;-</span> dplyr<span class="sc">::</span><span class="fu">filter</span>(by_dataset[[dataset]], role <span class="sc">==</span> <span class="st">&quot;test&quot;</span>)<span class="sc">$</span>truth</span>
+<span id="cb28-10"><a href="#cb28-10" tabindex="-1"></a>  metrics <span class="ot">&lt;-</span> yardstick<span class="sc">::</span><span class="fu">metric_set</span>(</span>
+<span id="cb28-11"><a href="#cb28-11" tabindex="-1"></a>    yardstick<span class="sc">::</span>roc_auc, yardstick<span class="sc">::</span>accuracy, yardstick<span class="sc">::</span>sensitivity,</span>
+<span id="cb28-12"><a href="#cb28-12" tabindex="-1"></a>    yardstick<span class="sc">::</span>specificity, yardstick<span class="sc">::</span>brier_class, yardstick<span class="sc">::</span>mn_log_loss</span>
+<span id="cb28-13"><a href="#cb28-13" tabindex="-1"></a>  )</span>
+<span id="cb28-14"><a href="#cb28-14" tabindex="-1"></a>  score <span class="ot">&lt;-</span> <span class="cf">function</span>(prob) {</span>
+<span id="cb28-15"><a href="#cb28-15" tabindex="-1"></a>    scored <span class="ot">&lt;-</span> tibble<span class="sc">::</span><span class="fu">tibble</span>(<span class="at">truth =</span> truth, <span class="at">prob =</span> prob, <span class="at">predicted =</span> <span class="fu">at_half</span>(prob))</span>
+<span id="cb28-16"><a href="#cb28-16" tabindex="-1"></a>    <span class="fu">metrics</span>(scored, truth, prob, <span class="at">estimate =</span> predicted, <span class="at">event_level =</span> <span class="st">&quot;second&quot;</span>)</span>
+<span id="cb28-17"><a href="#cb28-17" tabindex="-1"></a>  }</span>
+<span id="cb28-18"><a href="#cb28-18" tabindex="-1"></a>  raw <span class="ot">&lt;-</span> result<span class="sc">$</span>answers[[<span class="dv">1</span>]]<span class="sc">$</span>.pred_defective</span>
+<span id="cb28-19"><a href="#cb28-19" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">bind_rows</span>(</span>
+<span id="cb28-20"><a href="#cb28-20" tabindex="-1"></a>    <span class="at">raw =</span> <span class="fu">score</span>(raw),</span>
+<span id="cb28-21"><a href="#cb28-21" tabindex="-1"></a>    <span class="at">calibrated =</span> <span class="fu">score</span>(<span class="fu">platt_apply</span>(raw, intercept, slope)),</span>
+<span id="cb28-22"><a href="#cb28-22" tabindex="-1"></a>    <span class="at">.id =</span> <span class="st">&quot;probabilities&quot;</span></span>
+<span id="cb28-23"><a href="#cb28-23" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb28-24"><a href="#cb28-24" tabindex="-1"></a>    dplyr<span class="sc">::</span><span class="fu">mutate</span>(<span class="at">model =</span> model, <span class="at">dataset =</span> dataset, <span class="at">n =</span> <span class="fu">length</span>(truth), <span class="at">.before =</span> <span class="dv">1</span>)</span>
+<span id="cb28-25"><a href="#cb28-25" tabindex="-1"></a>}</span>
+<span id="cb28-26"><a href="#cb28-26" tabindex="-1"></a></span>
+<span id="cb28-27"><a href="#cb28-27" tabindex="-1"></a>test_summary <span class="ot">&lt;-</span> test <span class="sc">|&gt;</span></span>
+<span id="cb28-28"><a href="#cb28-28" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">left_join</span>(platt, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">&quot;model&quot;</span>, <span class="st">&quot;dataset&quot;</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb28-29"><a href="#cb28-29" tabindex="-1"></a>  purrr<span class="sc">::</span><span class="fu">pmap</span>(test_metrics) <span class="sc">|&gt;</span></span>
+<span id="cb28-30"><a href="#cb28-30" tabindex="-1"></a>  purrr<span class="sc">::</span><span class="fu">list_rbind</span>()</span></code></pre></div>
+<p>The table gives, for each model and dataset, the number of test
+images, the AUC and the accuracy (<code>raw_accuracy</code>) of the raw
+probabilities, and the accuracy, sensitivity, specificity, Brier score
+and log loss after Platt scaling.</p>
+<table>
+<colgroup>
+<col width="7%" />
+<col width="16%" />
+<col width="4%" />
+<col width="6%" />
+<col width="13%" />
+<col width="9%" />
+<col width="12%" />
+<col width="12%" />
+<col width="6%" />
+<col width="9%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">model</th>
+<th align="left">dataset</th>
+<th align="right">n</th>
+<th align="right">auc</th>
+<th align="right">raw_accuracy</th>
+<th align="right">accuracy</th>
+<th align="right">sensitivity</th>
+<th align="right">specificity</th>
+<th align="right">brier</th>
+<th align="right">log_loss</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">jev</td>
+<td align="left">extrusion</td>
+<td align="right">200</td>
+<td align="right">0.755</td>
+<td align="right">0.560</td>
+<td align="right">0.685</td>
+<td align="right">0.720</td>
+<td align="right">0.650</td>
+<td align="right">0.215</td>
+<td align="right">0.621</td>
+</tr>
+<tr class="even">
+<td align="left">jev</td>
+<td align="left">microstructure</td>
+<td align="right">450</td>
+<td align="right">0.934</td>
+<td align="right">0.840</td>
+<td align="right">0.884</td>
+<td align="right">0.791</td>
+<td align="right">0.978</td>
+<td align="right">0.091</td>
+<td align="right">0.297</td>
+</tr>
+<tr class="odd">
+<td align="left">jev</td>
+<td align="left">pan_images</td>
+<td align="right">78</td>
+<td align="right">1.000</td>
+<td align="right">0.987</td>
+<td align="right">0.885</td>
+<td align="right">0.769</td>
+<td align="right">1.000</td>
+<td align="right">0.075</td>
+<td align="right">0.287</td>
+</tr>
+<tr class="even">
+<td align="left">jev</td>
+<td align="left">pipe_staple</td>
+<td align="right">100</td>
+<td align="right">0.997</td>
+<td align="right">0.910</td>
+<td align="right">0.960</td>
+<td align="right">1.000</td>
+<td align="right">0.920</td>
+<td align="right">0.035</td>
+<td align="right">0.133</td>
+</tr>
+<tr class="odd">
+<td align="left">jev</td>
+<td align="left">textiles</td>
+<td align="right">200</td>
+<td align="right">1.000</td>
+<td align="right">0.620</td>
+<td align="right">0.990</td>
+<td align="right">0.980</td>
+<td align="right">1.000</td>
+<td align="right">0.027</td>
+<td align="right">0.130</td>
+</tr>
+<tr class="even">
+<td align="left">openai</td>
+<td align="left">extrusion</td>
+<td align="right">200</td>
+<td align="right">0.733</td>
+<td align="right">0.570</td>
+<td align="right">0.680</td>
+<td align="right">0.580</td>
+<td align="right">0.780</td>
+<td align="right">0.212</td>
+<td align="right">0.611</td>
+</tr>
+<tr class="odd">
+<td align="left">openai</td>
+<td align="left">microstructure</td>
+<td align="right">450</td>
+<td align="right">0.968</td>
+<td align="right">0.698</td>
+<td align="right">0.918</td>
+<td align="right">0.853</td>
+<td align="right">0.982</td>
+<td align="right">0.064</td>
+<td align="right">0.224</td>
+</tr>
+<tr class="even">
+<td align="left">openai</td>
+<td align="left">pan_images</td>
+<td align="right">78</td>
+<td align="right">0.997</td>
+<td align="right">0.808</td>
+<td align="right">0.654</td>
+<td align="right">0.308</td>
+<td align="right">1.000</td>
+<td align="right">0.163</td>
+<td align="right">0.465</td>
+</tr>
+<tr class="odd">
+<td align="left">openai</td>
+<td align="left">pipe_staple</td>
+<td align="right">100</td>
+<td align="right">0.995</td>
+<td align="right">0.950</td>
+<td align="right">0.950</td>
+<td align="right">0.900</td>
+<td align="right">1.000</td>
+<td align="right">0.046</td>
+<td align="right">0.186</td>
+</tr>
+<tr class="even">
+<td align="left">openai</td>
+<td align="left">textiles</td>
+<td align="right">200</td>
+<td align="right">0.958</td>
+<td align="right">0.805</td>
+<td align="right">0.875</td>
+<td align="right">0.760</td>
+<td align="right">0.990</td>
+<td align="right">0.093</td>
+<td align="right">0.306</td>
+</tr>
+<tr class="odd">
+<td align="left">clef</td>
+<td align="left">extrusion</td>
+<td align="right">200</td>
+<td align="right">0.842</td>
+<td align="right">0.500</td>
+<td align="right">0.745</td>
+<td align="right">0.680</td>
+<td align="right">0.810</td>
+<td align="right">0.164</td>
+<td align="right">0.499</td>
+</tr>
+<tr class="even">
+<td align="left">clef</td>
+<td align="left">microstructure</td>
+<td align="right">450</td>
+<td align="right">0.966</td>
+<td align="right">0.682</td>
+<td align="right">0.880</td>
+<td align="right">0.760</td>
+<td align="right">1.000</td>
+<td align="right">0.087</td>
+<td align="right">0.289</td>
+</tr>
+<tr class="odd">
+<td align="left">clef</td>
+<td align="left">pan_images</td>
+<td align="right">78</td>
+<td align="right">1.000</td>
+<td align="right">0.821</td>
+<td align="right">0.859</td>
+<td align="right">0.718</td>
+<td align="right">1.000</td>
+<td align="right">0.094</td>
+<td align="right">0.318</td>
+</tr>
+<tr class="even">
+<td align="left">clef</td>
+<td align="left">pipe_staple</td>
+<td align="right">100</td>
+<td align="right">0.999</td>
+<td align="right">0.610</td>
+<td align="right">0.970</td>
+<td align="right">0.980</td>
+<td align="right">0.960</td>
+<td align="right">0.023</td>
+<td align="right">0.112</td>
+</tr>
+<tr class="odd">
+<td align="left">clef</td>
+<td align="left">textiles</td>
+<td align="right">200</td>
+<td align="right">0.983</td>
+<td align="right">0.540</td>
+<td align="right">0.945</td>
+<td align="right">0.890</td>
+<td align="right">1.000</td>
+<td align="right">0.056</td>
+<td align="right">0.212</td>
+</tr>
+</tbody>
+</table>
+<p>The same threshold metrics, the Brier score and the log loss of the
+raw probabilities, before Platt scaling:</p>
+<table>
+<colgroup>
+<col width="10%" />
+<col width="21%" />
+<col width="12%" />
+<col width="17%" />
+<col width="17%" />
+<col width="8%" />
+<col width="12%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">model</th>
+<th align="left">dataset</th>
+<th align="right">accuracy</th>
+<th align="right">sensitivity</th>
+<th align="right">specificity</th>
+<th align="right">brier</th>
+<th align="right">log_loss</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">jev</td>
+<td align="left">extrusion</td>
+<td align="right">0.560</td>
+<td align="right">0.950</td>
+<td align="right">0.17</td>
+<td align="right">0.241</td>
+<td align="right">0.675</td>
+</tr>
+<tr class="even">
+<td align="left">jev</td>
+<td align="left">microstructure</td>
+<td align="right">0.840</td>
+<td align="right">0.680</td>
+<td align="right">1.00</td>
+<td align="right">0.113</td>
+<td align="right">0.359</td>
+</tr>
+<tr class="odd">
+<td align="left">jev</td>
+<td align="left">pan_images</td>
+<td align="right">0.987</td>
+<td align="right">0.974</td>
+<td align="right">1.00</td>
+<td align="right">0.053</td>
+<td align="right">0.236</td>
+</tr>
+<tr class="even">
+<td align="left">jev</td>
+<td align="left">pipe_staple</td>
+<td align="right">0.910</td>
+<td align="right">1.000</td>
+<td align="right">0.82</td>
+<td align="right">0.084</td>
+<td align="right">0.309</td>
+</tr>
+<tr class="odd">
+<td align="left">jev</td>
+<td align="left">textiles</td>
+<td align="right">0.620</td>
+<td align="right">1.000</td>
+<td align="right">0.24</td>
+<td align="right">0.165</td>
+<td align="right">0.469</td>
+</tr>
+<tr class="even">
+<td align="left">openai</td>
+<td align="left">extrusion</td>
+<td align="right">0.570</td>
+<td align="right">0.990</td>
+<td align="right">0.15</td>
+<td align="right">0.345</td>
+<td align="right">2.292</td>
+</tr>
+<tr class="odd">
+<td align="left">openai</td>
+<td align="left">microstructure</td>
+<td align="right">0.698</td>
+<td align="right">0.396</td>
+<td align="right">1.00</td>
+<td align="right">0.221</td>
+<td align="right">0.847</td>
+</tr>
+<tr class="even">
+<td align="left">openai</td>
+<td align="left">pan_images</td>
+<td align="right">0.808</td>
+<td align="right">0.615</td>
+<td align="right">1.00</td>
+<td align="right">0.118</td>
+<td align="right">0.356</td>
+</tr>
+<tr class="odd">
+<td align="left">openai</td>
+<td align="left">pipe_staple</td>
+<td align="right">0.950</td>
+<td align="right">0.960</td>
+<td align="right">0.94</td>
+<td align="right">0.078</td>
+<td align="right">0.293</td>
+</tr>
+<tr class="even">
+<td align="left">openai</td>
+<td align="left">textiles</td>
+<td align="right">0.805</td>
+<td align="right">0.960</td>
+<td align="right">0.65</td>
+<td align="right">0.152</td>
+<td align="right">0.470</td>
+</tr>
+<tr class="odd">
+<td align="left">clef</td>
+<td align="left">extrusion</td>
+<td align="right">0.500</td>
+<td align="right">0.000</td>
+<td align="right">1.00</td>
+<td align="right">0.258</td>
+<td align="right">0.708</td>
+</tr>
+<tr class="even">
+<td align="left">clef</td>
+<td align="left">microstructure</td>
+<td align="right">0.682</td>
+<td align="right">0.364</td>
+<td align="right">1.00</td>
+<td align="right">0.228</td>
+<td align="right">0.664</td>
+</tr>
+<tr class="odd">
+<td align="left">clef</td>
+<td align="left">pan_images</td>
+<td align="right">0.821</td>
+<td align="right">0.641</td>
+<td align="right">1.00</td>
+<td align="right">0.134</td>
+<td align="right">0.406</td>
+</tr>
+<tr class="even">
+<td align="left">clef</td>
+<td align="left">pipe_staple</td>
+<td align="right">0.610</td>
+<td align="right">1.000</td>
+<td align="right">0.22</td>
+<td align="right">0.173</td>
+<td align="right">0.520</td>
+</tr>
+<tr class="odd">
+<td align="left">clef</td>
+<td align="left">textiles</td>
+<td align="right">0.540</td>
+<td align="right">0.080</td>
+<td align="right">1.00</td>
+<td align="right">0.244</td>
+<td align="right">0.670</td>
+</tr>
+</tbody>
+</table>
+<p>The AUC measures the ranking: it is the chance that a defective image
+gets a higher probability than a normal image. On the pans and the pipe
+staples, the AUC of each model is 0.995 or more. On the microstructures
+and the textiles, it lies between 0.934 and 1.000. The extrusion images
+are the hardest for all three models: their AUC lies between 0.733 and
+0.842.</p>
+<p>A good ranking does not give good decisions at a probability of 0.5.
+The raw probabilities of a model can fall mostly on one side of 0.5. For
+example, on the extrusion images, Clef-Flash gives no test image a raw
+probability of 0.5 or more (the highest is 0.495), although its AUC
+there is 0.842. So with the raw probabilities it calls every image
+normal, and its accuracy is 0.500. After Platt scaling, its accuracy is
+0.745.</p>
+<p>Platt scaling moves the probabilities toward the rates of defects of
+the calibration images. On most setups, this helps. The accuracy at 0.5
+is higher after Platt scaling for 12 of the 15 setups, and the same for
+gpt-6-luna on the pipe staples. The Brier score and the log loss are
+both lower for 13 setups.</p>
+<p>Platt scaling hurts Jev on the pans and gpt-6-luna on the pans. Their
+accuracy falls (Jev 0.987 to 0.885 and gpt-6-luna 0.808 to 0.654), their
+Brier score rises (Jev 0.053 to 0.075 and gpt-6-luna 0.118 to 0.163),
+and their log loss rises (Jev 0.236 to 0.287 and gpt-6-luna 0.356 to
+0.465). The Platt fits of the pans come from only 18 images, and the
+grid chose the setup on most of these images (see “Calibration”), so
+these fits are rough.</p>
+<p>The test sets are small. For the 78 pan images, one image on the
+wrong side changes the accuracy by 1.3 percentage points, and for the
+100 pipe staple images by 1.0 points.</p>
+<div id="cost-and-time-of-the-test" class="section level3">
+<h3>Cost and time of the test</h3>
+<p>Each test run sends one request per distinct image. The two extrusion
+test images that are the same file share one request
+(<code>decide()</code> sends identical inputs once), so
+<code>images</code> is 1,027 per model, for 1,028 test images.
+<code>seconds</code> is the sum of the response times, and
+<code>minutes</code> is the time of the whole run (10 requests at a
+time).</p>
+<table>
+<thead>
+<tr class="header">
+<th align="left">model</th>
+<th align="right">images</th>
+<th align="right">input_tokens</th>
+<th align="right">cost</th>
+<th align="right">seconds</th>
+<th align="right">log_rows</th>
+<th align="right">minutes</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">jev</td>
+<td align="right">1,027</td>
+<td align="right">7,437,499</td>
+<td align="right">NA</td>
+<td align="right">1,022.282</td>
+<td align="right">1,027</td>
+<td align="right">2.2</td>
+</tr>
+<tr class="even">
+<td align="left">openai</td>
+<td align="right">1,027</td>
+<td align="right">2,606,155</td>
+<td align="right">NA</td>
+<td align="right">866.213</td>
+<td align="right">1,027</td>
+<td align="right">2.1</td>
+</tr>
+<tr class="odd">
+<td align="left">clef</td>
+<td align="right">1,027</td>
+<td align="right">1,706,215</td>
+<td align="right">NA</td>
+<td align="right">2,066.687</td>
+<td align="right">NA</td>
+<td align="right">4.0</td>
+</tr>
+</tbody>
+</table>
+<p><code>log_rows</code> is the number of paid calls that the script
+<code>study_again.R</code> logged, one row per call. Clef-Flash runs on
+this computer and costs nothing per call, so it has no log. Each model
+scored its test images in 2.1 to 4.0 minutes.</p>
+</div>
+</div>
+<div id="cost-and-time" class="section level2">
+<h2>Cost and time</h2>
+<p>The tables below give the tuning steps (wording, grid and
+calibration); the test has its own table in “Test”. TypeSafe, OpenAI and
+the Clef-Flash server report no cost, so <code>.cost</code> is
+<code>NA</code>, and the reported cost below is <code>NA</code> too. All
+three report the input tokens. <code>images</code> is the number of
+scored images: one call each. <code>seconds</code> is the sum of the
+response times. The requests run in parallel (10 at a time), so a run
+takes less time than this sum.</p>
+<table style="width:99%;">
+<colgroup>
+<col width="8%" />
+<col width="8%" />
+<col width="14%" />
+<col width="16%" />
+<col width="12%" />
+<col width="19%" />
+<col width="20%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">model</th>
+<th align="right">images</th>
+<th align="right">input_tokens</th>
+<th align="right">reported_cost</th>
+<th align="right">seconds</th>
+<th align="right">tokens_per_image</th>
+<th align="right">seconds_per_image</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">jev</td>
+<td align="right">3,730</td>
+<td align="right">27,544,904</td>
+<td align="right">NA</td>
+<td align="right">3,444.394</td>
+<td align="right">7,384.693</td>
+<td align="right">0.923</td>
+</tr>
+<tr class="even">
+<td align="left">clef</td>
+<td align="right">4,210</td>
+<td align="right">11,765,934</td>
+<td align="right">NA</td>
+<td align="right">13,996.386</td>
+<td align="right">2,794.759</td>
+<td align="right">3.325</td>
+</tr>
+<tr class="odd">
+<td align="left">openai</td>
+<td align="right">4,306</td>
+<td align="right">12,046,952</td>
+<td align="right">NA</td>
+<td align="right">4,554.550</td>
+<td align="right">2,797.713</td>
+<td align="right">1.058</td>
+</tr>
+</tbody>
+</table>
+<p>The images by step:</p>
+<table>
+<thead>
+<tr class="header">
+<th align="left">model</th>
+<th align="left">step</th>
+<th align="right">images</th>
+<th align="right">input_tokens</th>
+<th align="right">cost</th>
+<th align="right">seconds</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">jev</td>
+<td align="left">wording</td>
+<td align="right">1,248</td>
+<td align="right">10,354,944</td>
+<td align="right">NA</td>
+<td align="right">1,118.131</td>
+</tr>
+<tr class="even">
+<td align="left">clef</td>
+<td align="left">wording</td>
+<td align="right">1,728</td>
+<td align="right">5,432,160</td>
+<td align="right">NA</td>
+<td align="right">6,531.470</td>
+</tr>
+<tr class="odd">
+<td align="left">openai</td>
+<td align="left">wording</td>
+<td align="right">1,824</td>
+<td align="right">5,667,168</td>
+<td align="right">NA</td>
+<td align="right">1,771.646</td>
+</tr>
+<tr class="even">
+<td align="left">jev</td>
+<td align="left">grid</td>
+<td align="right">2,280</td>
+<td align="right">15,707,648</td>
+<td align="right">NA</td>
+<td align="right">2,124.139</td>
+</tr>
+<tr class="odd">
+<td align="left">openai</td>
+<td align="left">grid</td>
+<td align="right">2,280</td>
+<td align="right">5,838,144</td>
+<td align="right">NA</td>
+<td align="right">2,536.228</td>
+</tr>
+<tr class="even">
+<td align="left">clef</td>
+<td align="left">grid</td>
+<td align="right">2,280</td>
+<td align="right">5,958,136</td>
+<td align="right">NA</td>
+<td align="right">7,016.431</td>
+</tr>
+<tr class="odd">
+<td align="left">jev</td>
+<td align="left">calibration</td>
+<td align="right">202</td>
+<td align="right">1,482,312</td>
+<td align="right">NA</td>
+<td align="right">202.124</td>
+</tr>
+<tr class="even">
+<td align="left">openai</td>
+<td align="left">calibration</td>
+<td align="right">202</td>
+<td align="right">541,640</td>
+<td align="right">NA</td>
+<td align="right">246.677</td>
+</tr>
+<tr class="odd">
+<td align="left">clef</td>
+<td align="left">calibration</td>
+<td align="right">202</td>
+<td align="right">375,638</td>
+<td align="right">NA</td>
+<td align="right">448.485</td>
+</tr>
+</tbody>
+</table>
+<p>The wording images of gpt-6-luna are the calls of its loops. No
+tuning step scored a test image.</p>
+<p>Jev used about 2.6 times the input tokens of the other two models for
+the same images. The two hosted models answered in about 0.9 (Jev) and
+1.1 (gpt-6-luna) seconds per image. Clef-Flash ran on one GPU (NVIDIA
+RTX 5000 Ada, 32 GB), and it took about 3.3 seconds per image, but it
+costs nothing per call. Once, during the wording step, the Clef-Flash
+server stopped answering. A restart of the server and a new run with the
+same state files continued the step: the finished answers came from the
+state files, and only the open images were sent again.</p>
+</div>
+<div id="image-size" class="section level2">
+<h2>Image size</h2>
+<p>The setup here differs slightly from the paper of the original study.
+This vignette enlarges each image to 512 or 768 pixels on its longest
+side (<code>upscale = TRUE</code>; the large pan images are made
+smaller). The paper used 1,568 pixels, with padding.</p>
+</div>
+<div id="reruns" class="section level2">
+<h2>Reruns</h2>
+<p>The answers of a model can change a little from one run to the next.
+A second run of the code of this vignette, on 2026-10-24, gave the same
+answers for gpt-6-luna at every step. For Jev (<code>jev-1.14.0</code>),
+the AUCs of the wording and grid steps differed by at most 0.03, and two
+close choices changed: the final wording of microstructure (candidate 3
+in place of 2) and the number of references for extrusion (4 in place of
+1). The test AUC of Jev on extrusion was 0.739 in place of 0.755.
+Clef-Flash, on a local GPU, changed less: its wording AUCs differed by
+at most 0.005, one close choice changed (the final wording of textiles,
+candidate 4 in place of 2), it chose the same k and image size for all
+five datasets, and its test AUCs differed by at most 0.007. So expect
+slightly different numbers for Jev and Clef-Flash when you run this
+code.</p>
+</div>
+<div id="references" class="section level2">
+<h2>References</h2>
+<p>Bui, A. T., &amp; Apley, D. W. (2021). spc4sts: Statistical process
+control for stochastic textured surfaces in R. <em>Journal of Quality
+Technology, 53</em>(3), 219-242. <a href="https://doi.org/10.1080/00224065.2019.1707730" class="uri">https://doi.org/10.1080/00224065.2019.1707730</a></p>
+<p>Carvalho, P., Lafou, M., Durupt, A., Leblanc, A., &amp; Grandvalet,
+Y. (2024). <em>The Automotive Visual Inspection Dataset (AutoVI): A
+genuine industrial production dataset for unsupervised anomaly
+detection</em> <span class="math display">\[Data set\]</span>. Zenodo.
+<a href="https://doi.org/10.5281/zenodo.10459003" class="uri">https://doi.org/10.5281/zenodo.10459003</a></p>
+<p>Megahed, F. M., &amp; Camelio, J. A. (2012). Real-time fault
+detection in manufacturing environments using face recognition
+techniques. <em>Journal of Intelligent Manufacturing, 23</em>(3),
+393-408. <a href="https://doi.org/10.1007/s10845-010-0378-3" class="uri">https://doi.org/10.1007/s10845-010-0378-3</a></p>
+<p>Megahed, F. M., Chen, Y.-J., Colosimo, B. M., Grasso, M.,
+Jones-Farmer, L. A., Knoth, S., Sun, H., &amp; Zwetsloot, I. M. (2026).
+Adapting OpenAI’s CLIP model for few-shot image inspection in
+manufacturing quality control: An expository case study with multiple
+application examples. <em>Journal of Quality Technology, 58</em>(4),
+415-441. <a href="https://doi.org/10.1080/00224065.2026.2640171" class="uri">https://doi.org/10.1080/00224065.2026.2640171</a></p>
+</div>
+
+
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
