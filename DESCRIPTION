@@ -1,5 +1,5 @@
 Package: decisions
-Version: 0.1.0
+Version: 0.1.1
 Title: Typed Decisions from Decision Models
 Description: Sends texts and images to decision models: hosted or local
     models that return a probability for each allowed answer to a typed
@@ -40,10 +40,10 @@ VignetteBuilder: knitr, rmarkdown
 Config/roxygen2/version: 8.0.0
 LazyData: true
 NeedsCompilation: no
-Packaged: 2026-10-24 15:36:31 UTC; megahefm
+Packaged: 2026-11-25 02:51:12 UTC; megahefm
 Author: Fadel M. Megahed [aut, cre] (ORCID:
     <https://orcid.org/0000-0003-2194-5110>),
   Ying-Ju Chen [aut] (ORCID: <https://orcid.org/0000-0002-6444-6859>)
 Maintainer: Fadel M. Megahed <fmegahed@miamioh.edu>
 Repository: CRAN
-Date/Publication: 2026-11-08 17:00:07 UTC
+Date/Publication: 2026-11-25 03:40:02 UTC
